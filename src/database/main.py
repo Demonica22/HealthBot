@@ -1,10 +1,10 @@
 import aiosqlite
 from os import getenv
 from dotenv import load_dotenv
+from pathlib import Path
 
 load_dotenv()
-DB_NAME = getenv("DB_NAME")
-
+DB_NAME = str(Path("data") / getenv("DB_NAME"))
 
 async def initialize_database():
     # Подключаемся к базе данных (если база данных не существует, она будет создана)
