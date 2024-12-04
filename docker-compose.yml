@@ -3,10 +3,36 @@ version: "3.8"
 services:
   telegram-bot:
     build:
-      context: .
-    container_name: telegram-bot
+      context: ./HealthBot
+    container_name: healthbot
     env_file:
-      - .env
+      - ./HealthBot/.env
+    depends_on:
+      - database
+      - backend
     volumes:
-      - ./data:/app/data
+      - ./HealthBot/data:/app/data
+    restart: always
+
+  backend:
+    build:
+      context: ./HealthBackend
+    container_name: healthbackend
+#    env_file:
+#      - ./HealthBackend/.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+#    restart: always
+
+  database:
+    image: postgres:17
+    container_name: healthdb
+    env_file:
+      - ./.env
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     restart: always
