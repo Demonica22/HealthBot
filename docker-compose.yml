@@ -6,7 +6,9 @@ services:
       context: ./HealthBot
     container_name: healthbot
     env_file:
-      - ./HealthBot/.env
+      - ./.env
+    environment:
+      API_HOST : "backend"
     depends_on:
       - database
       - backend
@@ -18,21 +20,28 @@ services:
     build:
       context: ./HealthBackend
     container_name: healthbackend
-#    env_file:
-#      - ./HealthBackend/.env
+    env_file:
+      - ./.env
+    environment:
+      DB_HOST: "database"
     ports:
-      - "8000:8000"
+      - "${API_PORT}:${API_PORT}"
+    command: ["uvicorn", "main:app", "--host", "${API_HOST}", "--port", "${API_PORT}"]
     depends_on:
       - database
-#    restart: always
+    restart: always
 
   database:
     image: postgres:17
     container_name: healthdb
     env_file:
       - ./.env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+        - "${DB_PORT}:${DB_PORT}"
     volumes:
       - ./data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     restart: always

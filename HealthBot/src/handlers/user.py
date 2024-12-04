@@ -4,7 +4,7 @@ from aiogram.filters import Command, StateFilter
 from aiogram import Router, F
 
 from src.states.user_registration import UserRegistration
-from src.database.main import add_user, get_user_by_id
+from src.api.handlers import add_user, get_user_by_id
 from src.localizations.main import get_text, AVAILABLE_LANGS, DEFAULT_LANG
 from .main_menu import send_main_menu
 
@@ -34,18 +34,19 @@ async def name_chosen(message: Message, state: FSMContext):
 
 @user_router.message(UserRegistration.weight)
 async def name_chosen(message: Message, state: FSMContext):
-    await state.update_data(weight=message.text)
+    await state.update_data(weight=int(message.text))
     await message.answer(text=get_text("height_message", lang=(await state.get_data())['language']))
     await state.set_state(UserRegistration.height)
 
 
 @user_router.message(UserRegistration.height)
 async def gender_chosen(message: Message, state: FSMContext):
-    await state.update_data(height=message.text.lower())
+    await state.update_data(height=int(message.text))
     await message.answer(
         text=get_text("register_complete_message", lang=(await state.get_data())['language']))
     user_data: dict = await state.get_data()
-    await add_user(message.chat.id, user_data)
+    user_data['id'] = int(message.chat.id)
+    await add_user(user_data)
     await state.clear()
     await send_main_menu(message)
 
