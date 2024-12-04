@@ -4,3 +4,7 @@ sqlalchemy
 asyncpg
 psycopg2-binary
 python-dotenv
+alembic
+pydantic
+pydantic-settings
+black
