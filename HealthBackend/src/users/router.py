@@ -1,7 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Response, status
 from src.database.session import SessionDep
 from sqlalchemy import select
 from src.users.models import User
+from src.users.schemas import UserSchema
 
 router = APIRouter(prefix="/users")
 
@@ -14,7 +15,9 @@ async def get_all_users(session: SessionDep):
     return users
 
 
-@router.post("/")
+@router.post(path="/",
+             response_model=UserSchema,
+             status_code=status.HTTP_201_CREATED)
 async def add_user(data: dict, session: SessionDep):
     new_user = User(
         id=data['id'],
@@ -26,6 +29,7 @@ async def add_user(data: dict, session: SessionDep):
     )
     session.add(new_user)
     await session.commit()
+    return new_user
 
 
 @router.get("/{user_id}")
