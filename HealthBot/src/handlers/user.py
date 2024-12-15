@@ -4,7 +4,8 @@ from aiogram.filters import Command, StateFilter
 from aiogram import Router, F
 
 from src.states.user_registration import UserRegistration
-from src.api.handlers import add_user, get_user_by_id
+from src.states.user_change_data import UserChangeData
+from src.api.handlers import add_user, get_user_by_id, update_user
 from src.localizations.main import get_text, AVAILABLE_LANGS, DEFAULT_LANG
 from .main_menu import send_main_menu
 
@@ -61,12 +62,11 @@ async def change_info(callback: CallbackQuery):
                                                  [InlineKeyboardButton(text=get_text("weight_field", user_language),
                                                                        callback_data="weight_field")],
                                                  [InlineKeyboardButton(text=get_text("height_field", user_language),
-                                                                       callback_data="weight_field")],
+                                                                       callback_data="height_field")],
                                                  [InlineKeyboardButton(text=get_text("language_field", user_language),
                                                                        callback_data="language_field")],
-                                                 [InlineKeyboardButton(
-                                                     text=get_text("check_personal_data", user_language),
-                                                     callback_data="check_personal_data")]]
+                                                 [InlineKeyboardButton(text=get_text("back_button", user_language),
+                                                                       callback_data="back_check_info")], ]
 
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
@@ -79,8 +79,8 @@ async def get_info(callback: CallbackQuery):
     user_language: str = user_info['language']
 
     buttons: list[list[InlineKeyboardButton]] = [
-        [InlineKeyboardButton(text=get_text("back_button", user_language),
-                              callback_data="back_change_info")],
+        [InlineKeyboardButton(text=get_text("change_data_message", user_language),
+                              callback_data="change_info")],
         [InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
                               callback_data="to_main_menu")]
     ]
@@ -93,6 +93,26 @@ async def get_info(callback: CallbackQuery):
                                                             user_info['weight'],
                                                             user_info['height'],
                                                             ), reply_markup=inline_keyboard)
+
+
+@user_router.callback_query(F.data.contains("field"))
+async def change_piece(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(UserChangeData.field_name)
+    await state.update_data(field_name=callback.data.split('_')[0])
+    await state.set_state(UserChangeData.new_data)
+    user_lang = (await get_user_by_id(callback.message.chat.id))['language']
+    await callback.message.answer(
+        text=get_text("enter_new_data_for_change_message", lang=user_lang).format(get_text(callback.data, lang=user_lang))
+    )
+
+
+@user_router.message(UserChangeData.new_data)
+async def change_data(message: Message, state: FSMContext):
+    await state.update_data(new_data=message.text)
+    data: dict = await state.get_data()
+    await update_user(message.chat.id, data['field_name'], data['new_data'])
+    await state.clear()
+    await send_main_menu(message)
 
 
 @user_router.message(StateFilter(None), Command("start"))

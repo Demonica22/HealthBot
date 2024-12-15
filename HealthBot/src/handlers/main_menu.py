@@ -12,8 +12,10 @@ async def send_main_menu(message: Message, edit: bool = False):
     user_language: str = (await get_user_by_id(message.chat.id))['language']
 
     buttons: list[list[InlineKeyboardButton]] = [
-        [InlineKeyboardButton(text=get_text("change_data_message", user_language),
-                              callback_data="change_info")]
+        [InlineKeyboardButton(
+            text=get_text("check_personal_data", user_language),
+            callback_data="check_personal_data")]
+
     ]
 
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)

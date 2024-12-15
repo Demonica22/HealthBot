@@ -16,9 +16,9 @@ localization = {
     "height_field": "Height",
     "language_field": "Language",
     "check_personal_data": "View your information",
-    "change_info_message": "Select the field you want to change:",
     "user_info_message": "Your name: {}\nYour gender: {}\nYour language: {}\nYour weight: {}\nYour height: {}",
-
+    "change_info_message": "Select the field you want to change:",
+    "enter_new_data_for_change_message": "Enter new data for the field <b>{}</b>",
     # BUTTONS
     "main_menu_message": "Main Menu",
     "back_button": "Back",

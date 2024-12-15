@@ -16,9 +16,9 @@ localization = {
     "height_field": "Рост",
     "language_field": "Язык",
     "check_personal_data": "Посмотреть свои данные",
+    "user_info_message": "Ваше имя: {}\nВаш пол: {}\nВаш язык: {}\nВаш вес: {}\nВаш рост: {}",
     "change_info_message": "Выберите поле, которое хотите поменять:",
-    "user_info_message": "Ваше имя: {}\nВаш пол: {}\nВаш язык: {}\nВаш вес: {}\n Ваш рост: {}",
-
+    "enter_new_data_for_change_message": "Введите новые данные для поля <b>{}</b>",
     # КНОПКИ
     "main_menu_message": "Главное меню",
     "back_button": "Назад",

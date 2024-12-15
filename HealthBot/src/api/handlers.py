@@ -5,7 +5,7 @@ import aiohttp
 load_dotenv()
 API_HOST = getenv("API_HOST")
 API_PORT = getenv("API_PORT")
-API_URL = f"http://{API_HOST}:{API_PORT}"
+API_URL = f"http://localhost:{API_PORT}"
 
 
 async def add_user(data: dict) -> bool:
@@ -17,4 +17,18 @@ async def add_user(data: dict) -> bool:
 async def get_user_by_id(id: int) -> dict:
     async with aiohttp.ClientSession() as session:
         async with session.get(API_URL + f"/users/{id}") as response:
+            return await response.json()
+
+
+async def update_user(id: int,
+                      field: str,
+                      new_data: str) -> dict:
+    async with aiohttp.ClientSession() as session:
+        print("CHANGED data :", field, new_data)
+        return
+        async with session.patch(API_URL + f"/users/{id}",
+                                 json={
+                                     "field": field,
+                                     "new_data": new_data
+                                 }) as response:
             return await response.json()
