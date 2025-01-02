@@ -1,3 +1,4 @@
+import logging
 from os import getenv
 from dotenv import load_dotenv
 import aiohttp
@@ -20,15 +21,16 @@ async def get_user_by_id(id: int) -> dict:
             return await response.json()
 
 
-async def update_user(id: int,
+async def update_user(user_id: int,
                       field: str,
                       new_data: str) -> dict:
     async with aiohttp.ClientSession() as session:
-        print("CHANGED data :", field, new_data)
-        return
-        async with session.patch(API_URL + f"/users/{id}",
+        async with session.patch(API_URL + f"/users/{user_id}",
                                  json={
-                                     "field": field,
-                                     "new_data": new_data
+                                     field: new_data
                                  }) as response:
-            return await response.json()
+            data = await response.json()
+            if not data['success']:
+                logging.error(f"User update error : {data['message']}")
+            else:
+                logging.info(f"Updated {user_id}, set {field} = {new_data}")
