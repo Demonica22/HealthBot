@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Response, status
 from src.database.session import SessionDep
 from sqlalchemy import select, update
+from sqlalchemy.orm import selectinload
 from src.users.models import User
 from src.users.schemas import UserSchema, UserPatchSchema
 
+from src.diseases.models import Disease
 router = APIRouter(prefix="/users")
 
 
@@ -18,7 +20,8 @@ async def get_all_users(session: SessionDep):
 @router.post(path="/",
              response_model=UserSchema,
              status_code=status.HTTP_201_CREATED)
-async def add_user(data: dict, session: SessionDep):
+async def add_user(data: UserSchema, session: SessionDep):
+    data = data.model_dump()
     new_user = User(
         id=data['id'],
         name=data['name'],
@@ -54,3 +57,11 @@ async def get_all_users(user_id: int,
     else:
         await session.commit()
         return {"success": True}
+
+
+@router.get("/diseases/{user_id}")
+async def get_all_user_diseases(user_id: int, session: SessionDep):
+    query = select(Disease).where(Disease.user_id == user_id)
+    result = await session.execute(query)
+    diseases = result.scalars().all()
+    return diseases

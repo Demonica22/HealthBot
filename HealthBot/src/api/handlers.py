@@ -45,5 +45,5 @@ async def add_disease(disease_data: dict) -> list[dict]:
 
 async def get_user_diseases(user_id: int) -> list[dict]:
     async with aiohttp.ClientSession() as session:
-        async with session.get(API_URL + f"/diseases/for_user/{user_id}") as response:
+        async with session.get(API_URL + f"/users/diseases/{user_id}") as response:
             return await response.json()
