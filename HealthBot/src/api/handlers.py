@@ -15,6 +15,7 @@ async def add_user(data: dict) -> bool:
             return await response.json()
 
 
+# TODO: add ttl cache
 async def get_user_by_id(id: int) -> dict:
     async with aiohttp.ClientSession() as session:
         async with session.get(API_URL + f"/users/{id}") as response:
@@ -34,3 +35,15 @@ async def update_user(user_id: int,
                 logging.error(f"User update error : {data['message']}")
             else:
                 logging.info(f"Updated {user_id}, set {field} = {new_data}")
+
+
+async def add_disease(disease_data: dict) -> list[dict]:
+    async with aiohttp.ClientSession() as session:
+        async with session.post(API_URL + "/diseases/", json=disease_data) as response:
+            return await response.json()
+
+
+async def get_user_diseases(user_id: int) -> list[dict]:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(API_URL + f"/diseases/for_user/{user_id}") as response:
+            return await response.json()

@@ -19,9 +19,23 @@ localization = {
     "user_info_message": "Ваше имя: {}\nВаш пол: {}\nВаш язык: {}\nВаш вес: {}\nВаш рост: {}",
     "change_info_message": "Выберите поле, которое хотите поменять:",
     "enter_new_data_for_change_message": "Введите новые данные для поля <b>{}</b>",
+
     # КНОПКИ
     "main_menu_message": "Главное меню",
     "back_button": "Назад",
     "to_main_menu_button": "В главное меню",
+    "add_disease_button": "Добавить болезнь",
+    "get_diseases_button": "Посмотреть все болезни",
+    "yes_button": "Да",
+    "no_button": "Нет",
 
+    # БОЛЕЗНИ
+    "add_disease_message": "Чем вы болеете?",
+    "disease_description_message": "Опишите вашу болезнь (симптомы, осложнения, все что полезно врачу)",
+    "disease_date_start_message": "Когда заболели? (введите в формате 21.10.2024)",
+    "disease_date_end_message": "Когда выздоровели? (введите в формате 21.10.2024)",
+    "disease_incorrect_date": "Вы ввели дату в неверном формате, пожалуйста, введите в формате ДД.ММ.ГГГГ - 21.10.2024",
+    "disease_still_sick_message": "До сих пор болеете?",
+    "disease_add_success_message": "Болезнь успешно добавлена!\nВозвращаю вас в главное меню.",
+    "get_diseases_message": "Вот список всех ваших болезней:\n {}",
 }

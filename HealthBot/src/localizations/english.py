@@ -23,4 +23,6 @@ localization = {
     "main_menu_message": "Main Menu",
     "back_button": "Back",
     "to_main_menu_button": "To Main Menu",
+    "add_disease": "Add a disease",
+
 }
