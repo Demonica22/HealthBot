@@ -26,7 +26,7 @@ services:
       DB_HOST: "database"
     ports:
       - "${API_PORT}:${API_PORT}"
-    command: [ "uvicorn", "main:app", "--host", "${API_HOST}", "--port", "${API_PORT}" ]
+    command: [ "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "${API_PORT}" ]
     depends_on:
       - database
     restart: always

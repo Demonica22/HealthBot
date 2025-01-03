@@ -8,7 +8,7 @@ from src.api.handlers import get_user_by_id, add_disease, get_user_diseases
 from src.localizations.main import get_text, AVAILABLE_LANGS, DEFAULT_LANG
 from src.states.disease_add import DiseaseAdd
 from src.utils.regex import DATE_REGEX
-from .main_menu import send_main_menu
+from src.utils.message_formatters import generate_telegram_message
 
 disease_router = Router()
 
@@ -50,6 +50,14 @@ async def title_chosen(message: Message, state: FSMContext):
 async def description_chosen(message: Message, state: FSMContext):
     user_language: str = (await get_user_by_id(message.chat.id))['language']
     await state.update_data(description=message.text)
+    await message.answer(text=get_text("disease_treatment_plan_message", lang=user_language))
+    await state.set_state(DiseaseAdd.treatment_plan)
+
+
+@disease_router.message(DiseaseAdd.treatment_plan)
+async def description_chosen(message: Message, state: FSMContext):
+    user_language: str = (await get_user_by_id(message.chat.id))['language']
+    await state.update_data(treatment_plan=message.text)
     await message.answer(text=get_text("disease_date_start_message", lang=user_language))
     await state.set_state(DiseaseAdd.date_from)
 
@@ -91,7 +99,6 @@ async def disease_add_end(user_language,
             await message.edit_text(text=get_text("disease_add_success_message", lang=user_language),
                                     reply_markup=inline_keyboard)
         except Exception:
-            logging.error("fsdfsd")
             await message.answer(text=get_text("disease_add_success_message", lang=user_language),
                                  reply_markup=inline_keyboard)
     else:
@@ -138,4 +145,5 @@ async def change_info(callback: CallbackQuery, state: FSMContext):
                               callback_data="to_main_menu")]
     ])
     await callback.message.edit_text(
-        get_text("get_diseases_message", user_language).format(diseases), reply_markup=inline_keyboard)
+        get_text("get_diseases_message", user_language).format(generate_telegram_message(diseases)),
+        reply_markup=inline_keyboard)
