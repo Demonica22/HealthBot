@@ -6,7 +6,7 @@ import aiohttp
 load_dotenv()
 API_HOST = getenv("API_HOST")
 API_PORT = getenv("API_PORT")
-API_URL = f"http://localhost:{API_PORT}"
+API_URL = f"http://{API_HOST}:{API_PORT}"
 
 
 async def add_user(data: dict) -> bool:
