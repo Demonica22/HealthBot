@@ -37,6 +37,11 @@ localization = {
     "disease_date_end_message": "Когда выздоровели? (введите в формате 21.10.2024)",
     "disease_incorrect_date": "Вы ввели дату в неверном формате, пожалуйста, введите в формате ДД.ММ.ГГГГ - 21.10.2024",
     "disease_still_sick_message": "До сих пор болеете?",
-    "disease_add_success_message": "Болезнь успешно добавлена!\nВозвращаю вас в главное меню.",
+    "disease_add_success_message": "Болезнь успешно добавлена!",
     "get_diseases_message": "Вот список всех ваших болезней:\n{}",
+    "disease_choose_inline_tip": "Введите свою болезнь или выберите из списка",
+    "disease_date_choose_inline_tip" : "Введите дату или выберите из списка",
+    "disease_today_date_word": "Сегодня",
+    "disease_yesterday_date_word": "Вчера",
+    "default_diseases_list": ["ОРВИ", "Грипп", "Аллергия", "Перелом", "ССЗ"],
 }

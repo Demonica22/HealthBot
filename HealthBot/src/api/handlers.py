@@ -24,7 +24,7 @@ async def get_user_by_id(id: int) -> dict:
 
 async def update_user(user_id: int,
                       field: str,
-                      new_data: str) -> dict:
+                      new_data: str):
     async with aiohttp.ClientSession() as session:
         async with session.patch(API_URL + f"/users/{user_id}",
                                  json={
@@ -34,12 +34,13 @@ async def update_user(user_id: int,
             if not data['success']:
                 logging.error(f"User update error : {data['message']}")
             else:
-                logging.info(f"Updated {user_id}, set {field} = {new_data}")
-
+                logging.debug(f"Updated {user_id}, set {field} = {new_data}")
 
 async def add_disease(disease_data: dict) -> list[dict]:
     async with aiohttp.ClientSession() as session:
+        logging.debug(f"Disease add: {disease_data}")
         async with session.post(API_URL + "/diseases/", json=disease_data) as response:
+            response.raise_for_status()
             return await response.json()
 
 
