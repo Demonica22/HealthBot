@@ -99,7 +99,8 @@ async def get_info(callback: CallbackQuery):
     await callback.message.edit_text(
         get_text("user_info_message", user_language).format(user_info['name'],
                                                             user_info['gender'],
-                                                            AVAILABLE_LANGS.get(user_info['language'], user_info['language']),
+                                                            AVAILABLE_LANGS.get(user_info['language'],
+                                                                                user_info['language']),
                                                             user_info['weight'],
                                                             user_info['height'],
                                                             ), reply_markup=inline_keyboard)
@@ -132,6 +133,8 @@ async def change_data(message: Message, state: FSMContext):
     user_language: str = (await get_user_by_id(message.chat.id))['language']
 
     buttons: list[list[InlineKeyboardButton]] = [
+        [InlineKeyboardButton(text=get_text("back_button", user_language),
+                              callback_data="back_check_info")],
         [InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
                               callback_data="to_main_menu")]
     ]
