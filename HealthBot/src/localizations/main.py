@@ -8,7 +8,7 @@ AVAILABLE_LANGS = {
 }
 
 
-def get_text(param: str, lang: str = "ru"):
+def get_text(param: str, lang: str = DEFAULT_LANG):
     if lang == "ru":
         return rus_loc[param]
     elif lang == "en":

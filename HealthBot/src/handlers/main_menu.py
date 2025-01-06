@@ -1,7 +1,7 @@
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from aiogram import Router, F
 
-from src.localizations.main import get_text
+from src.localizations import get_text
 from src.api.handlers import get_user_by_id
 
 main_router = Router()

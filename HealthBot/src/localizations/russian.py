@@ -1,4 +1,6 @@
 localization = {
+    "system_clear_keyboard": "Очищаю клавиатуру...",
+
     # РЕГИСТРАЦИЯ
     "greet_message": "Привет, {}!",
     "language_message": "Выберите ваш язык:",
@@ -40,7 +42,7 @@ localization = {
     "disease_add_success_message": "Болезнь успешно добавлена!",
     "get_diseases_message": "Вот список всех ваших болезней:\n{}",
     "disease_choose_inline_tip": "Введите свою болезнь или выберите из списка",
-    "disease_date_choose_inline_tip" : "Введите дату или выберите из списка",
+    "disease_date_choose_inline_tip": "Введите дату или выберите из списка",
     "disease_today_date_word": "Сегодня",
     "disease_yesterday_date_word": "Вчера",
     "default_diseases_list": ["ОРВИ", "Грипп", "Аллергия", "Перелом", "ССЗ"],

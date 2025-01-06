@@ -6,7 +6,7 @@ from aiogram import Router, F
 from src.states.user_registration import UserRegistration
 from src.states.user_change_data import UserChangeData
 from src.api.handlers import add_user, get_user_by_id, update_user
-from src.localizations.main import get_text, AVAILABLE_LANGS, DEFAULT_LANG
+from src.localizations import get_text, AVAILABLE_LANGS, DEFAULT_LANG
 from .main_menu import send_main_menu
 
 user_router = Router()

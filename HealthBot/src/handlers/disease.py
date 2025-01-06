@@ -7,11 +7,13 @@ from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, C
 from aiogram.fsm.context import FSMContext
 from aiogram import Router, F
 from src.api.handlers import get_user_by_id, add_disease, get_user_diseases
-from src.localizations.main import get_text, AVAILABLE_LANGS, DEFAULT_LANG
+from src.localizations import get_text, AVAILABLE_LANGS, DEFAULT_LANG
 from src.states.disease_add import DiseaseAdd
 from src.utils.regex import DATE_REGEX
 from src.utils.message_formatters import generate_telegram_message
 from src.utils.chat_keyboard_clearer import remove_chat_buttons
+from src.utils.keyboards import generate_days_keyboard
+from src.utils.date_checker import check_message_for_date
 
 disease_router = Router()
 
@@ -62,14 +64,7 @@ async def description_chosen(message: Message, state: FSMContext):
 async def treatment_plan_chosen(message: Message, state: FSMContext):
     user_language: str = (await get_user_by_id(message.chat.id))['language']
     await state.update_data(treatment_plan=message.text)
-    buttons = [
-        [KeyboardButton(text=get_text("disease_today_date_word", lang=user_language)),
-         KeyboardButton(text=get_text("disease_yesterday_date_word", lang=user_language))]
-    ]
-    keyboard = ReplyKeyboardMarkup(keyboard=buttons,
-                                   resize_keyboard=True,
-                                   one_time_keyboard=True,
-                                   input_field_placeholder=get_text("disease_date_choose_inline_tip", user_language))
+    keyboard = generate_days_keyboard(user_language)
     await message.answer(text=get_text("disease_date_start_message", lang=user_language), reply_markup=keyboard)
     await state.set_state(DiseaseAdd.date_from)
 
@@ -78,19 +73,13 @@ async def treatment_plan_chosen(message: Message, state: FSMContext):
 async def date_from_chosen(message: Message, state: FSMContext):
     user_language: str = (await get_user_by_id(message.chat.id))['language']
     date_from = message.text.lower()
-    today = get_text("disease_today_date_word", lang=user_language).lower()
-    yesterday = get_text("disease_yesterday_date_word", lang=user_language).lower()
-    possible_word_dates = (today, yesterday)
-    if date_from in possible_word_dates:
-        if date_from == today:
-            date_from = datetime.datetime.today().strftime("%d.%m.%Y")
-        elif date_from == yesterday:
-            date_from = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime("%d.%m.%Y")
+    if date_candidate := check_message_for_date(date_from, user_language):
+        date_from = date_candidate
     elif not re.fullmatch(DATE_REGEX, date_from):
         await message.answer(text=get_text("disease_incorrect_date", lang=user_language))
         return
     await state.update_data(date_from=date_from)
-    await remove_chat_buttons(message)
+    await remove_chat_buttons(message, user_language)
     buttons: list[list[InlineKeyboardButton]] = [
         [InlineKeyboardButton(text=get_text("yes_button", user_language),
                               callback_data="yes_button")
@@ -134,7 +123,7 @@ async def disease_add_end(user_language,
 
 
 @disease_router.callback_query(DiseaseAdd.still_sick)
-async def description_chosen(callback: CallbackQuery, state: FSMContext):
+async def still_sick_chosen(callback: CallbackQuery, state: FSMContext):
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
     if callback.data.startswith("yes"):
         await state.update_data(still_sick=True)
@@ -142,17 +131,22 @@ async def description_chosen(callback: CallbackQuery, state: FSMContext):
 
     else:
         await state.update_data(still_sick=False)
-        await callback.message.edit_text(text=get_text("disease_date_end_message", lang=user_language))
+        keyboard = generate_days_keyboard(user_language)
+        await callback.message.answer(text=get_text("disease_date_end_message", lang=user_language),
+                                      reply_markup=keyboard)
         await state.set_state(DiseaseAdd.date_to)
 
 
 @disease_router.message(DiseaseAdd.date_to)
 async def date_to_chosen(message: Message, state: FSMContext):
     user_language: str = (await get_user_by_id(message.chat.id))['language']
-    date_to = message.text
-    if not re.fullmatch(DATE_REGEX, date_to):
+    date_to = message.text.lower()
+    if date_candidate := check_message_for_date(date_to, user_language):
+        date_to = date_candidate
+    elif not re.fullmatch(DATE_REGEX, date_to):
         await message.answer(text=get_text("disease_incorrect_date", lang=user_language))
         return
+    await remove_chat_buttons(message, user_language)
     await state.update_data(date_to=date_to)
     await disease_add_end(user_language, message, state)
 
