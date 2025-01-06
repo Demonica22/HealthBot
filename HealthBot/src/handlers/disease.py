@@ -118,7 +118,7 @@ async def disease_add_end(user_language,
     try:
         await add_disease(data)
     except Exception as x:
-        await message.answer(text=f"Непредвиденная ошибка: {x}", reply_markup=inline_keyboard)
+        await message.answer(text=get_text("unexpected_error", user_language).format(x), reply_markup=inline_keyboard)
     await state.clear()
 
 

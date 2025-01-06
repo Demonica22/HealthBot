@@ -1,4 +1,7 @@
 localization = {
+    "system_clear_keyboard": "Clearing keyboards...",
+    "unexpected_error": "Unexpected error: {}",
+
     # REGISTRATION
     "greet_message": "Hello, {}!",
     "language_message": "Select your language:",

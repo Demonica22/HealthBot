@@ -1,4 +1,3 @@
-import datetime
 def generate_telegram_message(diseases: list[dict]) -> str:
     message = ""
     for disease in diseases:

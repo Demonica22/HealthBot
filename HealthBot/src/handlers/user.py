@@ -124,7 +124,7 @@ async def change_data(message: Message, state: FSMContext):
     try:
         await update_user(message.chat.id, data['field_name'], data['new_data'])
     except Exception as x:
-        await message.answer(text=f"Update error: {x}")
+        await message.answer(text=get_text("unexpected_error", user_language).format(x))
         return
 
     await state.clear()

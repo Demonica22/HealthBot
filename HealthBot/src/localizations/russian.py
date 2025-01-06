@@ -1,6 +1,6 @@
 localization = {
     "system_clear_keyboard": "Очищаю клавиатуру...",
-
+    "unexpected_error": "Непредвиденная ошибка: {}",
     # РЕГИСТРАЦИЯ
     "greet_message": "Привет, {}!",
     "language_message": "Выберите ваш язык:",
