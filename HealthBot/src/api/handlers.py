@@ -31,10 +31,8 @@ async def update_user(user_id: int,
                                      field: new_data
                                  }) as response:
             data = await response.json()
-            if not data['success']:
-                logging.error(f"User update error : {data['message']}")
-            else:
-                logging.debug(f"Updated {user_id}, set {field} = {new_data}")
+            response.raise_for_status()
+            logging.debug(f"Updated {user_id}, set {field} = {new_data}")
 
 async def add_disease(disease_data: dict) -> list[dict]:
     async with aiohttp.ClientSession() as session:

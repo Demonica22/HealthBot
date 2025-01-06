@@ -72,11 +72,11 @@ async def change_info(callback: CallbackQuery, state: FSMContext):
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
 
     buttons: list[list[InlineKeyboardButton]] = []
-    fields = ['name', 'gender', 'weight', 'height', 'language'] #FIXME:
+    fields = ['name', 'gender', 'weight', 'height', 'language']  # FIXME:
     for field in fields:
         buttons.append(
             [InlineKeyboardButton(text=get_text(field + "_field", user_language),
-                                  callback_data=field+ "_field")])
+                                  callback_data=field + "_field")])
     buttons.append([InlineKeyboardButton(text=get_text("back_button", user_language), callback_data="back_check_info")])
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     await state.set_state(UserChangeData.field_name)
@@ -99,7 +99,7 @@ async def get_info(callback: CallbackQuery):
     await callback.message.edit_text(
         get_text("user_info_message", user_language).format(user_info['name'],
                                                             user_info['gender'],
-                                                            AVAILABLE_LANGS[user_info['language']],
+                                                            AVAILABLE_LANGS.get(user_info['language'], user_info['language']),
                                                             user_info['weight'],
                                                             user_info['height'],
                                                             ), reply_markup=inline_keyboard)
@@ -121,7 +121,12 @@ async def change_data(message: Message, state: FSMContext):
     user_language: str = (await get_user_by_id(message.chat.id))['language']
     await state.update_data(new_data=message.text)
     data: dict = await state.get_data()
-    await update_user(message.chat.id, data['field_name'], data['new_data'])
+    try:
+        await update_user(message.chat.id, data['field_name'], data['new_data'])
+    except Exception as x:
+        await message.answer(text=f"Update error: {x}")
+        return
+
     await state.clear()
 
     buttons: list[list[InlineKeyboardButton]] = [
