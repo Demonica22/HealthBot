@@ -43,6 +43,7 @@ localization = {
     "disease_still_sick_message": "Are you still sick?",
     "disease_add_success_message": "Disease successfully added!",
     "get_diseases_message": "Here is a list of all your diseases:\n{}",
+    "get_diseases_empty_message": "I don't know any of your illnesses!\nYou are healthy!",
     "disease_choose_inline_tip": "Enter your disease or select from the list",
     "disease_date_choose_inline_tip": "Enter the date or select from the list",
     "disease_today_date_word": "Today",

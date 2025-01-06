@@ -44,6 +44,7 @@ localization = {
     "disease_still_sick_message": "До сих пор болеете?",
     "disease_add_success_message": "Болезнь успешно добавлена!",
     "get_diseases_message": "Вот список всех ваших болезней:\n{}",
+    "get_diseases_empty_message": "Я не знаю ни одной вашей болезни!\nВы здоровы!",
     "disease_choose_inline_tip": "Введите свою болезнь или выберите из списка",
     "disease_date_choose_inline_tip": "Введите дату или выберите из списка",
     "disease_today_date_word": "Сегодня",

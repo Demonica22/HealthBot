@@ -160,6 +160,11 @@ async def get_diseases(callback: CallbackQuery):
         [InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
                               callback_data="to_main_menu")]
     ])
-    await callback.message.edit_text(
-        get_text("get_diseases_message", user_language).format(generate_telegram_message(diseases)),
-        reply_markup=inline_keyboard)
+    if not diseases:
+        await callback.message.edit_text(
+            get_text("get_diseases_empty_message", user_language),
+            reply_markup=inline_keyboard)
+    else:
+        await callback.message.edit_text(
+            get_text("get_diseases_message", user_language).format(generate_telegram_message(diseases)),
+            reply_markup=inline_keyboard)
