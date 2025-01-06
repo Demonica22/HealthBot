@@ -29,3 +29,6 @@ class DiseaseSchemaAdd(BaseModel):
 class DiseaseSchema(DiseaseSchemaAdd):
     id: int
 
+    @field_validator("date_from", "date_to", mode='before')
+    def timestamp_to_date(cls, date):
+        return date
