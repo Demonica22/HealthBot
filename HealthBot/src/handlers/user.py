@@ -129,6 +129,8 @@ async def change_data(message: Message, state: FSMContext):
 
     await state.clear()
 
+    user_language: str = (await get_user_by_id(message.chat.id))['language']
+
     buttons: list[list[InlineKeyboardButton]] = [
         [InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
                               callback_data="to_main_menu")]
