@@ -3,7 +3,6 @@ from typing import Optional
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from src.database.models import Base
-# from src.users.models import User
 
 class Disease(Base):
     __tablename__ = 'diseases'

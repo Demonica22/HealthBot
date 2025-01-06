@@ -1,5 +1,6 @@
 import datetime
 
+from typing import Optional
 from pydantic import BaseModel, field_validator
 
 
@@ -11,7 +12,7 @@ class DiseaseSchemaAdd(BaseModel):
 
     still_sick: bool
     title: str
-    treatment_plan: str | None= None
+    treatment_plan: str | None = None
 
     @field_validator("date_from", "date_to", mode='before')
     def timestamp_to_date(cls, date) -> datetime.datetime:
@@ -23,3 +24,14 @@ class DiseaseSchemaAdd(BaseModel):
                 f"date expected a string value, received {date!r}"
             )
         return datetime.datetime.strptime(date, "%d.%m.%Y")
+
+
+class DiseaseSchema(BaseModel):
+    id: int
+    user_id: int
+    title: str
+    description: str
+    treatment_plan: Optional[str]
+    date_from: datetime.datetime
+    date_to: Optional[datetime.datetime]
+    still_sick: bool
