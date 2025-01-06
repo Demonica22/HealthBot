@@ -19,10 +19,29 @@ localization = {
     "user_info_message": "Your name: {}\nYour gender: {}\nYour language: {}\nYour weight: {}\nYour height: {}",
     "change_info_message": "Select the field you want to change:",
     "enter_new_data_for_change_message": "Enter new data for the field <b>{}</b>",
+
     # BUTTONS
     "main_menu_message": "Main Menu",
     "back_button": "Back",
     "to_main_menu_button": "To Main Menu",
-    "add_disease": "Add a disease",
+    "add_disease_button": "Add a disease",
+    "get_diseases_button": "View all diseases",
+    "yes_button": "Yes",
+    "no_button": "No",
 
+    # DISEASES
+    "add_disease_message": "What are you suffering from?",
+    "disease_description_message": "Describe your illness (symptoms, complications, anything useful for the doctor)",
+    "disease_treatment_plan_message": "If you have a treatment plan, write it:",
+    "disease_date_start_message": "When did you get sick? (enter in the format 21.10.2024)",
+    "disease_date_end_message": "When did you recover? (enter in the format 21.10.2024)",
+    "disease_incorrect_date": "You entered the date in an incorrect format, please enter in the format DD.MM.YYYY - 21.10.2024",
+    "disease_still_sick_message": "Are you still sick?",
+    "disease_add_success_message": "Disease successfully added!",
+    "get_diseases_message": "Here is a list of all your diseases:\n{}",
+    "disease_choose_inline_tip": "Enter your disease or select from the list",
+    "disease_date_choose_inline_tip": "Enter the date or select from the list",
+    "disease_today_date_word": "Today",
+    "disease_yesterday_date_word": "Yesterday",
+    "default_diseases_list": ["ARVI", "Flu", "Allergy", "Fracture", "CVD"],
 }
