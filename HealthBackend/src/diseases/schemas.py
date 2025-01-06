@@ -7,12 +7,12 @@ from pydantic import BaseModel, field_validator
 class DiseaseSchemaAdd(BaseModel):
     user_id: int
     description: str
-    date_from: datetime.datetime | None = None
+    date_from: datetime.datetime
     date_to: datetime.datetime | None = None
 
     still_sick: bool
     title: str
-    treatment_plan: str | None = None
+    treatment_plan: Optional[str]
 
     @field_validator("date_from", "date_to", mode='before')
     def timestamp_to_date(cls, date) -> datetime.datetime:
@@ -26,12 +26,6 @@ class DiseaseSchemaAdd(BaseModel):
         return datetime.datetime.strptime(date, "%d.%m.%Y")
 
 
-class DiseaseSchema(BaseModel):
+class DiseaseSchema(DiseaseSchemaAdd):
     id: int
-    user_id: int
-    title: str
-    description: str
-    treatment_plan: Optional[str]
-    date_from: datetime.datetime
-    date_to: Optional[datetime.datetime]
-    still_sick: bool
+
