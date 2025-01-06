@@ -4,8 +4,11 @@ localization = {
     "language_message": "Select your language:",
     "name_message": "Enter your first and last name:",
     "gender_message": "Select your gender:",
+    "gender_list": ["Male", "Female"],
     "weight_message": "Enter your weight:",
+    "weight_error_message": "Specify the weight in number format!",
     "height_message": "Enter your height in centimeters (e.g., 160):",
+    "height_error_message": "Specify the height in number format!",
     "register_complete_message": "Registration complete!",
 
     # Personal Data
@@ -19,6 +22,7 @@ localization = {
     "user_info_message": "Your name: {}\nYour gender: {}\nYour language: {}\nYour weight: {}\nYour height: {}",
     "change_info_message": "Select the field you want to change:",
     "enter_new_data_for_change_message": "Enter new data for the field <b>{}</b>",
+    "user_change_data_success_message": "The data has been updated successfully!",
 
     # BUTTONS
     "main_menu_message": "Main Menu",

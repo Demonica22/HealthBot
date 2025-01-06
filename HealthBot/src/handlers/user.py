@@ -12,7 +12,7 @@ from .main_menu import send_main_menu
 user_router = Router()
 
 
-@user_router.callback_query(lambda call: call.data in AVAILABLE_LANGS.keys())
+@user_router.callback_query(UserRegistration.language)
 async def language_chosen(callback: CallbackQuery, state: FSMContext):
     await state.update_data(language=callback.data)
     await callback.message.edit_text(text=get_text("name_message", lang=callback.data))
@@ -22,26 +22,41 @@ async def language_chosen(callback: CallbackQuery, state: FSMContext):
 @user_router.message(UserRegistration.name)
 async def name_chosen(message: Message, state: FSMContext):
     await state.update_data(name=message.text)
-    await message.answer(text=get_text("gender_message", lang=(await state.get_data())['language']))
+    user_language: str = (await state.get_data())['language']
+    genders: list = get_text("gender_list", user_language)
+    buttons: list[list[InlineKeyboardButton]] = [[InlineKeyboardButton(text=gender, callback_data=gender)] for gender in
+                                                 genders]
+
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    await message.answer(text=get_text("gender_message", lang=user_language),
+                         reply_markup=inline_keyboard)
     await state.set_state(UserRegistration.gender)
 
 
-@user_router.message(UserRegistration.gender)
-async def name_chosen(message: Message, state: FSMContext):
-    await state.update_data(gender=message.text)
-    await message.answer(text=get_text("weight_message", lang=(await state.get_data())['language']))
+@user_router.callback_query(UserRegistration.gender)
+async def gender_chosen(callback: CallbackQuery, state: FSMContext):
+    await state.update_data(gender=callback.data)
+    await callback.message.edit_text(text=get_text("weight_message", lang=(await state.get_data())['language']))
     await state.set_state(UserRegistration.weight)
 
 
 @user_router.message(UserRegistration.weight)
-async def name_chosen(message: Message, state: FSMContext):
+async def weight_chosen(message: Message, state: FSMContext):
+    user_language: str = (await state.get_data())['language']
+    if not message.text.isdigit():
+        await message.answer(text=get_text("weight_error_message", lang=user_language))
+        return
     await state.update_data(weight=int(message.text))
-    await message.answer(text=get_text("height_message", lang=(await state.get_data())['language']))
+    await message.answer(text=get_text("height_message", lang=user_language))
     await state.set_state(UserRegistration.height)
 
 
 @user_router.message(UserRegistration.height)
-async def gender_chosen(message: Message, state: FSMContext):
+async def height_chosen(message: Message, state: FSMContext):
+    user_language: str = (await state.get_data())['language']
+    if not message.text.isdigit():
+        await message.answer(text=get_text("height_error_message", lang=user_language))
+        return
     await state.update_data(height=int(message.text))
     await message.answer(
         text=get_text("register_complete_message", lang=(await state.get_data())['language']))
@@ -53,23 +68,18 @@ async def gender_chosen(message: Message, state: FSMContext):
 
 
 @user_router.callback_query(F.data == "change_info")
-async def change_info(callback: CallbackQuery):
+async def change_info(callback: CallbackQuery, state: FSMContext):
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
-    buttons: list[list[InlineKeyboardButton]] = [[InlineKeyboardButton(text=get_text("name_field", user_language),
-                                                                       callback_data="name_field")],
-                                                 [InlineKeyboardButton(text=get_text("gender_field", user_language),
-                                                                       callback_data="gender_field")],
-                                                 [InlineKeyboardButton(text=get_text("weight_field", user_language),
-                                                                       callback_data="weight_field")],
-                                                 [InlineKeyboardButton(text=get_text("height_field", user_language),
-                                                                       callback_data="height_field")],
-                                                 [InlineKeyboardButton(text=get_text("language_field", user_language),
-                                                                       callback_data="language_field")],
-                                                 [InlineKeyboardButton(text=get_text("back_button", user_language),
-                                                                       callback_data="back_check_info")], ]
 
+    buttons: list[list[InlineKeyboardButton]] = []
+    fields = ['name', 'gender', 'weight', 'height', 'language'] #FIXME:
+    for field in fields:
+        buttons.append(
+            [InlineKeyboardButton(text=get_text(field + "_field", user_language),
+                                  callback_data=field+ "_field")])
+    buttons.append([InlineKeyboardButton(text=get_text("back_button", user_language), callback_data="back_check_info")])
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-
+    await state.set_state(UserChangeData.field_name)
     await callback.message.edit_text(get_text("change_info_message", user_language), reply_markup=inline_keyboard)
 
 
@@ -89,41 +99,49 @@ async def get_info(callback: CallbackQuery):
     await callback.message.edit_text(
         get_text("user_info_message", user_language).format(user_info['name'],
                                                             user_info['gender'],
-                                                            user_info['language'],
+                                                            AVAILABLE_LANGS[user_info['language']],
                                                             user_info['weight'],
                                                             user_info['height'],
                                                             ), reply_markup=inline_keyboard)
 
 
-@user_router.callback_query(F.data.contains("field"))
+@user_router.callback_query(UserChangeData.field_name)
 async def change_piece(callback: CallbackQuery, state: FSMContext):
-    await state.set_state(UserChangeData.field_name)
     await state.update_data(field_name=callback.data.split('_')[0])
-    await state.set_state(UserChangeData.new_data)
     user_lang = (await get_user_by_id(callback.message.chat.id))['language']
-    await callback.message.answer(
-        text=get_text("enter_new_data_for_change_message", lang=user_lang).format(get_text(callback.data, lang=user_lang))
+    await callback.message.edit_text(
+        text=get_text("enter_new_data_for_change_message", lang=user_lang).format(
+            get_text(callback.data, lang=user_lang))
     )
+    await state.set_state(UserChangeData.new_data)
 
 
 @user_router.message(UserChangeData.new_data)
 async def change_data(message: Message, state: FSMContext):
+    user_language: str = (await get_user_by_id(message.chat.id))['language']
     await state.update_data(new_data=message.text)
     data: dict = await state.get_data()
     await update_user(message.chat.id, data['field_name'], data['new_data'])
     await state.clear()
-    await send_main_menu(message)
+
+    buttons: list[list[InlineKeyboardButton]] = [
+        [InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
+                              callback_data="to_main_menu")]
+    ]
+
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    await message.answer(text=get_text("user_change_data_success_message", user_language),
+                         reply_markup=inline_keyboard)
 
 
-@user_router.message(StateFilter(None), Command("start"))
-@user_router.message()
+@user_router.message(StateFilter(None))
+@user_router.message(Command("start"))
 async def registration_start(message: Message, state: FSMContext):
     if user := (await get_user_by_id(message.chat.id)):
         await message.answer(
             text=get_text('greet_message', user['language']).format(user['name']))
         await send_main_menu(message)
     else:
-
         language: str = message.from_user.language_code if message.from_user.language_code in AVAILABLE_LANGS else DEFAULT_LANG
         inline_keyboard = [[]]
         for callback, text in AVAILABLE_LANGS.items():
