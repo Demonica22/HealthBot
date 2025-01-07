@@ -4,7 +4,7 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 from src.users.models import User
 from src.users.schemas import UserSchema, UserPatchSchema
-
+from src.diseases.schemas import DiseaseSchema
 from src.diseases.models import Disease
 router = APIRouter(prefix="/users")
 
@@ -60,7 +60,7 @@ async def get_all_users(user_id: int,
 
 
 @router.get("/diseases/{user_id}")
-async def get_all_user_diseases(user_id: int, session: SessionDep):
+async def get_all_user_diseases(user_id: int, session: SessionDep) -> list[DiseaseSchema]:
     query = select(Disease).where(Disease.user_id == user_id)
     result = await session.execute(query)
     diseases = result.scalars().all()
