@@ -1,8 +1,10 @@
 import logging
-from os import getenv
-from dotenv import load_dotenv
 import aiohttp
 
+from os import getenv
+from dotenv import load_dotenv
+
+from src.api.schemas import DiseaseSchema
 load_dotenv()
 API_HOST = getenv("API_HOST")
 API_PORT = getenv("API_PORT")
@@ -34,6 +36,7 @@ async def update_user(user_id: int,
             response.raise_for_status()
             logging.debug(f"Updated {user_id}, set {field} = {new_data}")
 
+
 async def add_disease(disease_data: dict) -> list[dict]:
     async with aiohttp.ClientSession() as session:
         logging.debug(f"Disease add: {disease_data}")
@@ -45,4 +48,7 @@ async def add_disease(disease_data: dict) -> list[dict]:
 async def get_user_diseases(user_id: int) -> list[dict]:
     async with aiohttp.ClientSession() as session:
         async with session.get(API_URL + f"/users/diseases/{user_id}") as response:
-            return await response.json()
+            response.raise_for_status()
+            diseases_list = await response.json()
+            diseases_list[:] = [DiseaseSchema(**disease).model_dump() for disease in diseases_list]
+            return diseases_list

@@ -1,16 +1,15 @@
-import datetime
-import logging
 import re
 
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, ReplyKeyboardMarkup, \
     KeyboardButton, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 from aiogram import Router, F
+
 from src.api.handlers import get_user_by_id, add_disease, get_user_diseases
 from src.localizations import get_text, AVAILABLE_LANGS, DEFAULT_LANG
 from src.states.disease_add import DiseaseAdd
 from src.utils.regex import DATE_REGEX
-from src.utils.message_formatters import generate_telegram_message
+from src.utils.message_formatters import generate_diseases_message
 from src.utils.chat_keyboard_clearer import remove_chat_buttons
 from src.utils.keyboards import generate_days_keyboard
 from src.utils.date_checker import check_message_for_date
@@ -81,10 +80,10 @@ async def date_from_chosen(message: Message, state: FSMContext):
     await state.update_data(date_from=date_from)
     await remove_chat_buttons(message, user_language)
     buttons: list[list[InlineKeyboardButton]] = [
-        [InlineKeyboardButton(text=get_text("yes_button", user_language),
+        [InlineKeyboardButton(text=get_text("yes", user_language),
                               callback_data="yes_button")
          ],
-        [InlineKeyboardButton(text=get_text("no_button", user_language),
+        [InlineKeyboardButton(text=get_text("no", user_language),
                               callback_data="no_button")
          ],
     ]
@@ -166,5 +165,5 @@ async def get_diseases(callback: CallbackQuery):
             reply_markup=inline_keyboard)
     else:
         await callback.message.edit_text(
-            get_text("get_diseases_message", user_language).format(generate_telegram_message(diseases)),
+            get_text("get_diseases_message", user_language).format(generate_diseases_message(diseases, user_language)),
             reply_markup=inline_keyboard)

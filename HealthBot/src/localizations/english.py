@@ -33,8 +33,8 @@ localization = {
     "to_main_menu_button": "To Main Menu",
     "add_disease_button": "Add a disease",
     "get_diseases_button": "View all diseases",
-    "yes_button": "Yes",
-    "no_button": "No",
+    "yes": "Yes",
+    "no": "No",
 
     # DISEASES
     "add_disease_message": "What are you suffering from?",
@@ -45,11 +45,21 @@ localization = {
     "disease_incorrect_date": "You entered the date in an incorrect format, please enter in the format DD.MM.YYYY - 21.10.2024",
     "disease_still_sick_message": "Are you still sick?",
     "disease_add_success_message": "Disease successfully added!",
-    "get_diseases_message": "Here is a list of all your diseases:\n{}",
-    "get_diseases_empty_message": "I don't know any of your illnesses!\nYou are healthy!",
     "disease_choose_inline_tip": "Enter your disease or select from the list",
-    "disease_date_choose_inline_tip": "Enter the date or select from the list",
+    "default_diseases_list": ["ARVI", "Flu", "Allergy", "Fracture", "CVD"],
+
+    "disease_date_choose_inline_tip": "Enter the date or select from the list", \
     "disease_today_date_word": "Today",
     "disease_yesterday_date_word": "Yesterday",
-    "default_diseases_list": ["ARVI", "Flu", "Allergy", "Fracture", "CVD"],
+
+    "get_diseases_message": "Here is a list of all your diseases:\n{}",
+    "get_diseases_empty_message": "I don't know any of your illnesses!\nYou are healthy!",
+    "diseases_list_title": "Title",
+    "diseases_list_description": "Description",
+    "diseases_list_treatment_plan": "Treatment plan",
+    "diseases_list_start_date": "Date of illness",
+    "diseases_list_end_date": "Date of recovery",
+    "diseases_list_still_sick": "Still sick?",
+    "diseases_list_total_days_sick": "Illness duration",
+    "day_word": "days",
 }

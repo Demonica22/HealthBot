@@ -1,13 +1,30 @@
-def generate_telegram_message(diseases: list[dict]) -> str:
-    message = ""
+from pymorphy3 import MorphAnalyzer
+
+from src.localizations import get_text
+
+
+def generate_diseases_message(diseases: list[dict],
+                              user_language: str) -> str:
+
+    message = "--------------------\n"
     for disease in diseases:
         message += (
-            f"Название: {disease['title']}\n"
-            f"Описание: {disease['description']}\n"
-            f"План лечения: {disease['treatment_plan'] if disease['treatment_plan'] else "-"}\n"
-            f"Дата начала: {disease['date_from']}\n"
+            f"<b>{get_text("diseases_list_title", user_language)}:</b>\n{disease['title']}\n"
+            f"<b>{get_text("diseases_list_description", user_language)}:</b>\n{disease['description']}\n"
+            f"<b>{get_text("diseases_list_treatment_plan", user_language)}:</b>\n{disease['treatment_plan'] if disease['treatment_plan'] else "-"}\n"
+            f"<b>{get_text("diseases_list_start_date", user_language)}:</b>\n{disease['date_from']}\n"
         )
-        message += f"Дата выздоровления: {disease['date_to']}\n" if disease['date_to'] \
-            else f"До сих пор болеете?: {'Да'}\n"
+        if disease['date_to']:
+            message += f"<b>{get_text("diseases_list_end_date", user_language)}:</b>\n{disease['date_to']}\n"
+            sick_days = (disease['date_to'] - disease['date_from']).days
+            days_word = get_text("day_word", user_language)
+            if user_language == "ru":
+                morph = MorphAnalyzer(lang=user_language)
+                days_word = morph.parse(days_word)[0].make_agree_with_number(sick_days).word
+
+            message += (f"<b>{get_text("diseases_list_total_days_sick", user_language)}:</b>\n{sick_days} "
+                        f"{days_word}\n")
+        else:
+            message += f"<b>{get_text("diseases_list_still_sick", user_language)}:</b>\n{get_text("yes", user_language)}\n"
         message += f"\n--------------------\n"
     return message
