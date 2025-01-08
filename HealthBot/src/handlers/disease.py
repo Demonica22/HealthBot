@@ -209,9 +209,8 @@ async def get_diseases(callback: CallbackQuery, state: FSMContext):
         await callback.message.edit_text(
             get_text("get_diseases_empty_message", user_language),
             reply_markup=inline_keyboard)
-        return
 
-    if callback.data == "telegram":
+    elif callback.data == "telegram":
         await callback.message.edit_text(
             get_text("get_diseases_message", user_language).format(generate_diseases_message(diseases, user_language)),
             reply_markup=inline_keyboard)
@@ -219,3 +218,5 @@ async def get_diseases(callback: CallbackQuery, state: FSMContext):
         await callback.message.edit_text(
             get_text("not_supported_message", user_language),
             reply_markup=inline_keyboard)
+
+    await state.clear()
