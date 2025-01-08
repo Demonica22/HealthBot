@@ -39,7 +39,7 @@ async def add_user(data: UserSchema, session: SessionDep):
 
 
 @router.get("/{user_id}")
-async def get_all_users(user_id: int, session: SessionDep):
+async def get_user(user_id: int, session: SessionDep):
     query = select(User).where(User.id == user_id)
     result = await session.execute(query)
     user = result.scalars().first()
@@ -47,9 +47,9 @@ async def get_all_users(user_id: int, session: SessionDep):
 
 
 @router.patch("/{user_id}")
-async def get_all_users(user_id: int,
-                        session: SessionDep,
-                        body: UserPatchSchema):
+async def update_user(user_id: int,
+                      session: SessionDep,
+                      body: UserPatchSchema):
     try:
         update_data = body.model_dump(exclude_none=True)
         query = update(User).where(User.id == user_id).values(**update_data)
