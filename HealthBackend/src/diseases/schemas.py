@@ -3,6 +3,8 @@ import datetime
 from typing import Optional
 from pydantic import BaseModel, field_validator
 
+from src.utils.constants import STRING_DATE_FORMAT
+
 
 class DiseaseSchemaAdd(BaseModel):
     user_id: int
@@ -23,7 +25,7 @@ class DiseaseSchemaAdd(BaseModel):
             raise TypeError(
                 f"date expected a string value, received {date!r}"
             )
-        return datetime.datetime.strptime(date, "%d.%m.%Y")
+        return datetime.datetime.strptime(date, STRING_DATE_FORMAT)
 
 
 class DiseaseSchema(DiseaseSchemaAdd):

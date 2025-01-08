@@ -1,11 +1,14 @@
-from fastapi import APIRouter, Response, status
-from src.database.session import SessionDep
+from fastapi import APIRouter, status
 from sqlalchemy import select, update
-from sqlalchemy.orm import selectinload
+from datetime import datetime
+
+from src.database.session import SessionDep
 from src.users.models import User
 from src.users.schemas import UserSchema, UserPatchSchema
 from src.diseases.schemas import DiseaseSchema
 from src.diseases.models import Disease
+from src.utils.constants import STRING_DATE_FORMAT
+
 router = APIRouter(prefix="/users")
 
 
@@ -60,8 +63,13 @@ async def get_all_users(user_id: int,
 
 
 @router.get("/diseases/{user_id}")
-async def get_all_user_diseases(user_id: int, session: SessionDep) -> list[DiseaseSchema]:
+async def get_all_user_diseases(user_id: int, start_date: str, session: SessionDep) -> list[DiseaseSchema]:
     query = select(Disease).where(Disease.user_id == user_id)
+
+    if start_date != "-1":
+        start_date = datetime.strptime(start_date, STRING_DATE_FORMAT)
+        query = query.where((Disease.date_to > start_date) | (Disease.still_sick == True))
+
     result = await session.execute(query)
     diseases = result.scalars().all()
     return diseases

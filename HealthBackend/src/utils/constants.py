@@ -1,0 +1,2 @@
+
+STRING_DATE_FORMAT = "%d.%m.%Y"
