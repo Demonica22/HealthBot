@@ -1,6 +1,7 @@
 localization = {
     "system_clear_keyboard": "Clearing keyboards...",
     "unexpected_error": "Unexpected error: {}",
+    "not_supported_message": "Sorry, I don't support this(",
 
     # REGISTRATION
     "greet_message": "Hello, {}!",
@@ -61,5 +62,17 @@ localization = {
     "diseases_list_end_date": "Date of recovery",
     "diseases_list_still_sick": "Still sick?",
     "diseases_list_total_days_sick": "Illness duration",
+
+    "choose_diseases_periods_message": "How far back do you wish to trace your medical history?",
+    "diseases_choose_how_to_get_message": "How do you want to get a list of diseases?",
+    "diseases_list_message_type": [("HTML page", "html"), ("Message in Telegram", "telegram"),
+                                   ("Word table", "word")],
+    # название для кнопки + длительность периода в месяцах.
+    "diseases_list_of_periods": [("1 month", 1),
+                                 ("3 months", 3),
+                                 ("6 months", 6),
+                                 ("1 year", 12),
+                                 ("All Time", -1)],
+
     "day_word": "days",
 }

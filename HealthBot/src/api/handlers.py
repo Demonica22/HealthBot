@@ -3,8 +3,9 @@ import aiohttp
 
 from os import getenv
 from dotenv import load_dotenv
-
+from datetime import datetime, timedelta
 from src.api.schemas import DiseaseSchema
+
 load_dotenv()
 API_HOST = getenv("API_HOST")
 API_PORT = getenv("API_PORT")
@@ -45,9 +46,15 @@ async def add_disease(disease_data: dict) -> list[dict]:
             return await response.json()
 
 
-async def get_user_diseases(user_id: int) -> list[dict]:
+async def get_user_diseases(user_id: int,
+                            period_for_load: int = -1) -> list[dict]:
+    if period_for_load == -1:
+        start_date = -1
+    else:
+        start_date = (datetime.now() - timedelta(days=30 * period_for_load)).strftime("%d.%m.%Y")
+
     async with aiohttp.ClientSession() as session:
-        async with session.get(API_URL + f"/users/diseases/{user_id}") as response:
+        async with session.get(API_URL + f"/users/diseases/{user_id}", params={'start_date': start_date}) as response:
             response.raise_for_status()
             diseases_list = await response.json()
             diseases_list[:] = [DiseaseSchema(**disease).model_dump() for disease in diseases_list]

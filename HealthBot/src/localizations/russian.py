@@ -1,6 +1,7 @@
 localization = {
     "system_clear_keyboard": "Очищаю клавиатуру...",
     "unexpected_error": "Непредвиденная ошибка: {}",
+    "not_supported_message": "Извините, я не поддерживаю такое(",
     # РЕГИСТРАЦИЯ
     "greet_message": "Привет, {}!",
     "language_message": "Выберите ваш язык:",
@@ -31,8 +32,8 @@ localization = {
     "to_main_menu_button": "В главное меню",
     "add_disease_button": "Добавить болезнь",
     "get_diseases_button": "Посмотреть все болезни",
-    "yes_button": "Да",
-    "no_button": "Нет",
+    "yes": "Да",
+    "no": "Нет",
 
     # БОЛЕЗНИ
     "add_disease_message": "Чем вы болеете?",
@@ -59,8 +60,18 @@ localization = {
     "diseases_list_end_date": "Дата выздоровления",
     "diseases_list_still_sick": "До сих пор болеете?",
     "diseases_list_total_days_sick": "Длительность болезни",
+
+    "choose_diseases_periods_message": "За какое время вы хотите получить историю болезни?",
+    "diseases_choose_how_to_get_message": "Как вы хотите получить список болезней?",
+    "diseases_list_message_type": [("HTML страница", "html"), ("Сообщение в телеграмм", "telegram"),
+                                   ("Word Таблица", "word")],
+    # название для кнопки + длительность периода в месяцах.
+    "diseases_list_of_periods": [("1 месяц", 1),
+                                 ("3 месяца", 3),
+                                 ("6 месяцев", 6),
+                                 ("Год", 12),
+                                 ("Все время", -1)],
+
     "day_word": "день",
-
-
 
 }

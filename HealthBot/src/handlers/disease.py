@@ -1,3 +1,4 @@
+import logging
 import re
 
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, ReplyKeyboardMarkup, \
@@ -8,6 +9,7 @@ from aiogram import Router, F
 from src.api.handlers import get_user_by_id, add_disease, get_user_diseases
 from src.localizations import get_text, AVAILABLE_LANGS, DEFAULT_LANG
 from src.states.disease_add import DiseaseAdd
+from src.states.disease_request import DiseaseRequest
 from src.utils.regex import DATE_REGEX
 from src.utils.message_formatters import generate_diseases_message
 from src.utils.chat_keyboard_clearer import remove_chat_buttons
@@ -151,19 +153,69 @@ async def date_to_chosen(message: Message, state: FSMContext):
 
 
 @disease_router.callback_query(F.data == "get_diseases")
-async def get_diseases(callback: CallbackQuery):
+async def diseases_time_menu(callback: CallbackQuery, state: FSMContext):
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
-    diseases = await get_user_diseases(callback.message.chat.id)
+    buttons = []
+    button_row = []
+    for label, duration in get_text("diseases_list_of_periods", user_language):
+        button_row.append(InlineKeyboardButton(text=label,
+                                               callback_data=f"period_{duration}"))
+        if len(button_row) == default_diseases_list_row_size:
+            buttons.append(button_row)
+            button_row = []
+    if button_row:
+        buttons.append(button_row)
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    await state.set_state(DiseaseRequest.how_long)
+    await callback.message.edit_text(get_text("choose_diseases_periods_message", user_language),
+                                     reply_markup=inline_keyboard)
+
+
+@disease_router.callback_query(DiseaseRequest.how_long)
+async def diseases_type_menu(callback: CallbackQuery, state: FSMContext):
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+    await state.update_data(how_long=int(callback.data.split("_")[1]))
+    buttons = [[InlineKeyboardButton(text=piece[0],
+                                     callback_data=piece[1])] for piece in
+               get_text("diseases_list_message_type", user_language)]
+
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    await callback.message.edit_text(get_text("diseases_choose_how_to_get_message", user_language),
+                                     reply_markup=inline_keyboard)
+    await state.set_state(DiseaseRequest.how)
+
+
+@disease_router.callback_query(DiseaseRequest.how)
+async def get_diseases(callback: CallbackQuery, state: FSMContext):
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+    period_for_load: int = (await state.get_data())['how_long']
+
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=
     [
         [InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
                               callback_data="to_main_menu")]
     ])
+
+    try:
+        diseases = await get_user_diseases(callback.message.chat.id, period_for_load)
+    except Exception as x:
+        logging.debug(f"Ошибка получения болезней за {period_for_load} c помощью {callback.data}: {x}")
+        await callback.message.answer(text=get_text("unexpected_error", user_language).format(x),
+                                      reply_markup=inline_keyboard)
+        return
+
     if not diseases:
         await callback.message.edit_text(
             get_text("get_diseases_empty_message", user_language),
             reply_markup=inline_keyboard)
-    else:
+        return
+
+    if callback.data == "telegram":
         await callback.message.edit_text(
             get_text("get_diseases_message", user_language).format(generate_diseases_message(diseases, user_language)),
+            reply_markup=inline_keyboard)
+    else:
+        await callback.message.edit_text(
+            get_text("not_supported_message", user_language),
             reply_markup=inline_keyboard)
