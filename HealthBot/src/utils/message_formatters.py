@@ -2,7 +2,9 @@ from src.localizations import get_text
 
 def generate_diseases_message(diseases: list[dict],
                               user_language: str) -> str:
-
+    if user_language == "ru":
+        from pymorphy3 import MorphAnalyzer
+        morph = MorphAnalyzer(lang=user_language)
     message = "--------------------\n"
     for disease in diseases:
         message += (
@@ -16,8 +18,6 @@ def generate_diseases_message(diseases: list[dict],
             sick_days = (disease['date_to'] - disease['date_from']).days
             days_word = get_text("day_word", user_language)
             if user_language == "ru":
-                from pymorphy3 import MorphAnalyzer
-                morph = MorphAnalyzer(lang=user_language)
                 days_word = morph.parse(days_word)[0].make_agree_with_number(sick_days).word
 
             message += (f"<b>{get_text("diseases_list_total_days_sick", user_language)}:</b>\n{sick_days} "
