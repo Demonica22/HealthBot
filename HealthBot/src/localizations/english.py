@@ -53,7 +53,8 @@ localization = {
     "disease_today_date_word": "Today",
     "disease_yesterday_date_word": "Yesterday",
 
-    "get_diseases_message": "Here is a list of all your diseases:\n{}",
+    "get_diseases_message": "<b>Here is a list of all your diseases:</b>\n",
+    "diseases_filename": "Diseases.docx",
     "get_diseases_empty_message": "I don't know any of your illnesses!\nYou are healthy!",
     "diseases_list_title": "Title",
     "diseases_list_description": "Description",
@@ -75,4 +76,6 @@ localization = {
                                  ("All Time", -1)],
 
     "day_word": "days",
+    "what_is_next": "What is next?",
+
 }

@@ -51,8 +51,9 @@ localization = {
     "disease_today_date_word": "Сегодня",
     "disease_yesterday_date_word": "Вчера",
 
-    "get_diseases_message": "<b>Вот список всех ваших болезней:</b>\n{}",
+    "get_diseases_message": "<b>Вот список всех ваших болезней:</b>\n",
     "get_diseases_empty_message": "Я не знаю ни одной вашей болезни!\nВы здоровы!",
+    "diseases_filename": "Болезни.docx",
     "diseases_list_title": "Название",
     "diseases_list_description": "Описание",
     "diseases_list_treatment_plan": "План лечения",
@@ -73,5 +74,6 @@ localization = {
                                  ("Все время", -1)],
 
     "day_word": "день",
+    "what_is_next": "Что делаем дальше?",
 
 }

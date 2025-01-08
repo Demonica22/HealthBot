@@ -2,11 +2,12 @@ import logging
 import re
 
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, ReplyKeyboardMarkup, \
-    KeyboardButton, ReplyKeyboardRemove
+    KeyboardButton, ReplyKeyboardRemove, URLInputFile
 from aiogram.fsm.context import FSMContext
 from aiogram import Router, F
+from aiogram.utils.markdown import hlink
 
-from src.api.handlers import get_user_by_id, add_disease, get_user_diseases
+from src.api.handlers import get_user_by_id, add_disease, get_user_diseases, get_user_diseases_url
 from src.localizations import get_text, AVAILABLE_LANGS, DEFAULT_LANG
 from src.states.disease_add import DiseaseAdd
 from src.states.disease_request import DiseaseRequest
@@ -165,6 +166,8 @@ async def diseases_time_menu(callback: CallbackQuery, state: FSMContext):
             button_row = []
     if button_row:
         buttons.append(button_row)
+    buttons.append(
+        [InlineKeyboardButton(text=get_text("back_button", user_language), callback_data="back_diseases_menu")])
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     await state.set_state(DiseaseRequest.how_long)
     await callback.message.edit_text(get_text("choose_diseases_periods_message", user_language),
@@ -212,8 +215,32 @@ async def get_diseases(callback: CallbackQuery, state: FSMContext):
 
     elif callback.data == "telegram":
         await callback.message.edit_text(
-            get_text("get_diseases_message", user_language).format(generate_diseases_message(diseases, user_language)),
+            get_text("get_diseases_message", user_language) + generate_diseases_message(diseases, user_language),
             reply_markup=inline_keyboard)
+    elif callback.data == "word":
+        file = URLInputFile(
+            await get_user_diseases_url(user_id=callback.message.chat.id,
+                                        period_for_load=period_for_load,
+                                        user_language=user_language,
+                                        response_format="docx"),
+            filename=get_text("diseases_filename", user_language)
+        )
+        await callback.message.delete()
+
+        await callback.message.answer_document(caption=get_text("get_diseases_message", user_language),
+                                               document=file)
+        await callback.message.answer(get_text("what_is_next", user_language),
+                                      reply_markup=inline_keyboard)
+    # elif callback.data == "html":
+    #     url = await get_user_diseases_url(user_id=callback.message.chat.id,
+    #                                       period_for_load=period_for_load,
+    #                                       user_language=user_language,
+    #                                       response_format="docx")
+    #     print(url)
+    #     await callback.message.edit_text(hlink("click",
+    #                                            url),
+    #                                      parse_mode="markdown",
+    #                                      reply_markup=inline_keyboard)
     else:
         await callback.message.edit_text(
             get_text("not_supported_message", user_language),
