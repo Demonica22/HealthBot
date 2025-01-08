@@ -1,6 +1,7 @@
 import logging
 import aiohttp
 
+from http import HTTPStatus
 from os import getenv
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
@@ -19,9 +20,11 @@ async def add_user(data: dict) -> bool:
 
 
 # TODO: add ttl cache
-async def get_user_by_id(id: int) -> dict:
+async def get_user_by_id(id: int) -> dict | None:
     async with aiohttp.ClientSession() as session:
         async with session.get(API_URL + f"/users/{id}") as response:
+            if response.status == HTTPStatus.NOT_FOUND:
+                return None
             return await response.json()
 
 
