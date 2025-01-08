@@ -1,4 +1,6 @@
+from typing import Union
 from fastapi import APIRouter, status
+from fastapi.responses import StreamingResponse, HTMLResponse
 from sqlalchemy import select, update
 from datetime import datetime
 
@@ -6,8 +8,10 @@ from src.database.session import SessionDep
 from src.users.models import User
 from src.users.schemas import UserSchema, UserPatchSchema
 from src.diseases.schemas import DiseaseSchema
+from src.diseases.enums import DiseasesResponseFormat, UserLanguage
 from src.diseases.models import Disease
 from src.utils.constants import STRING_DATE_FORMAT
+from src.utils.make_diseases_document import make_in_memory_document
 
 router = APIRouter(prefix="/users")
 
@@ -63,7 +67,11 @@ async def update_user(user_id: int,
 
 
 @router.get("/diseases/{user_id}")
-async def get_all_user_diseases(user_id: int, start_date: str, session: SessionDep) -> list[DiseaseSchema]:
+async def get_all_user_diseases(user_id: int,
+                                session: SessionDep,
+                                start_date: str = "-1",
+                                response_format: DiseasesResponseFormat = DiseasesResponseFormat.json,
+                                user_language: UserLanguage = UserLanguage.ru):
     query = select(Disease).where(Disease.user_id == user_id)
 
     if start_date != "-1":
@@ -71,5 +79,13 @@ async def get_all_user_diseases(user_id: int, start_date: str, session: SessionD
         query = query.where((Disease.date_to > start_date) | (Disease.still_sick == True))
 
     result = await session.execute(query)
-    diseases = result.scalars().all()
-    return diseases
+
+    diseases = [DiseaseSchema.from_orm(disease).model_dump() for disease in result.scalars().all()]
+
+    if response_format == "json":
+        return diseases
+    elif response_format == "docx":
+        return StreamingResponse(content=make_in_memory_document(diseases, user_language),
+                                 headers={'Content-Disposition': 'attachment; filename="diseases.docx"'})
+    elif response_format == "html":
+        return HTMLResponse()
