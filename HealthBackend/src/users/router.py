@@ -3,6 +3,7 @@ from fastapi import APIRouter, status
 from fastapi.responses import StreamingResponse, HTMLResponse
 from sqlalchemy import select, update
 from datetime import datetime
+from http import HTTPStatus
 
 from src.database.session import SessionDep
 from src.users.models import User
@@ -12,6 +13,7 @@ from src.diseases.enums import DiseasesResponseFormat, UserLanguage
 from src.diseases.models import Disease
 from src.utils.constants import STRING_DATE_FORMAT
 from src.utils.make_diseases_document import make_in_memory_document
+from src.utils.generate_html_page import get_diseases_template
 
 router = APIRouter(prefix="/users")
 
@@ -88,4 +90,5 @@ async def get_all_user_diseases(user_id: int,
         return StreamingResponse(content=make_in_memory_document(diseases, user_language),
                                  headers={'Content-Disposition': 'attachment; filename="diseases.docx"'})
     elif response_format == "html":
-        return HTMLResponse()
+        return HTMLResponse(content=await get_diseases_template(diseases),
+                            status_code=HTTPStatus.OK)
