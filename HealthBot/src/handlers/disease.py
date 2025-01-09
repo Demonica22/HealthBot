@@ -231,16 +231,13 @@ async def get_diseases(callback: CallbackQuery, state: FSMContext):
                                                document=file)
         await callback.message.answer(get_text("what_is_next", user_language),
                                       reply_markup=inline_keyboard)
-    # elif callback.data == "html":
-    #     url = await get_user_diseases_url(user_id=callback.message.chat.id,
-    #                                       period_for_load=period_for_load,
-    #                                       user_language=user_language,
-    #                                       response_format="docx")
-    #     print(url)
-    #     await callback.message.edit_text(hlink("click",
-    #                                            url),
-    #                                      parse_mode="markdown",
-    #                                      reply_markup=inline_keyboard)
+    elif callback.data == "html":
+        url = await get_user_diseases_url(user_id=callback.message.chat.id,
+                                          period_for_load=period_for_load,
+                                          user_language=user_language,
+                                          response_format="html")
+        await callback.message.edit_text(f'<a href="{url}">Click</a>',
+                                         reply_markup=inline_keyboard)
     else:
         await callback.message.edit_text(
             get_text("not_supported_message", user_language),
