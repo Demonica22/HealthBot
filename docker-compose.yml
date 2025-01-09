@@ -4,6 +4,7 @@ services:
   telegram-bot:
     build:
       context: ./HealthBot
+      network: host
     container_name: healthbot
     env_file:
       - ./.env
@@ -19,6 +20,7 @@ services:
   backend:
     build:
       context: ./HealthBackend
+      network: host
     container_name: healthbackend
     env_file:
       - ./.env
