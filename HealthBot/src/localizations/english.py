@@ -74,6 +74,7 @@ localization = {
     "diseases_choose_how_to_get_message": "How do you want to get a list of diseases?",
     "diseases_list_message_type": [("HTML page", "html"), ("Message in Telegram", "telegram"),
                                    ("Word table", "word")],
+    "diseases_page_message": "Here is your diseases page",
     # название для кнопки + длительность периода в месяцах.
     "diseases_list_of_periods": [("1 month", 1),
                                  ("3 months", 3),

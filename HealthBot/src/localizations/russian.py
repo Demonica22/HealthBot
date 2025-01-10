@@ -72,6 +72,8 @@ localization = {
     "diseases_choose_how_to_get_message": "Как вы хотите получить список болезней?",
     "diseases_list_message_type": [("HTML страница", "html"), ("Сообщение в телеграмм", "telegram"),
                                    ("Word Таблица", "word")],
+    "diseases_page_message": "Вот таблица с вашими болезнями",
+
     # название для кнопки + длительность периода в месяцах.
     "diseases_list_of_periods": [("1 месяц", 1),
                                  ("3 месяца", 3),

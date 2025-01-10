@@ -236,7 +236,8 @@ async def get_diseases(callback: CallbackQuery, state: FSMContext):
                                           period_for_load=period_for_load,
                                           user_language=user_language,
                                           response_format="html")
-        await callback.message.edit_text(f'<a href="{url}">Click</a>',
+        await callback.message.edit_text(f'<a href="{url}">'
+                                         f'{get_text("diseases_page_message", user_language)}</a>',
                                          reply_markup=inline_keyboard)
     else:
         await callback.message.edit_text(
