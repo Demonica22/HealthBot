@@ -28,7 +28,7 @@ async def add_disease(data: DiseaseSchemaAdd, session: SessionDep):
     return new_disease
 
 
-@router.get("/{user_id}")
+@router.get("/for_user/{user_id}")
 async def get_all_user_diseases(user_id: int,
                                 session: SessionDep,
                                 request: Request,

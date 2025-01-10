@@ -15,9 +15,9 @@ API_PORT = getenv("API_PORT")
 API_URL = f"http://{API_HOST}:{API_PORT}"
 USERS_URL = API_URL + "/users/"
 DISEASES_URL = API_URL + "/diseases/"
-
+DISEASES_URL_FOR_USER = DISEASES_URL + "for_user/"
 SERVER_URl = f"http://{SERVER_HOST}:{API_PORT}"
-USER_DISEASES_SERVER_URL = SERVER_URl + "/diseases/"
+USER_DISEASES_SERVER_URL = SERVER_URl + "/diseases/" + "for_user/"
 
 
 async def add_user(data: dict) -> bool:
@@ -64,7 +64,7 @@ async def get_user_diseases(user_id: int,
         start_date = (datetime.now() - timedelta(days=30 * period_for_load)).strftime("%d.%m.%Y")
 
     async with aiohttp.ClientSession() as session:
-        async with session.get(DISEASES_URL + f"{user_id}", params={'start_date': start_date}) as response:
+        async with session.get(DISEASES_URL_FOR_USER + f"{user_id}", params={'start_date': start_date}) as response:
             response.raise_for_status()
             diseases_list = await response.json()
             diseases_list[:] = [DiseaseSchema(**disease).model_dump() for disease in diseases_list]
