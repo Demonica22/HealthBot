@@ -1,9 +1,7 @@
-from typing import Union
-from fastapi import APIRouter, status
-from fastapi.responses import StreamingResponse, HTMLResponse
+from fastapi import APIRouter, status, Request
+from fastapi.responses import StreamingResponse
 from sqlalchemy import select, update
 from datetime import datetime
-from http import HTTPStatus
 
 from src.database.session import SessionDep
 from src.users.models import User
@@ -71,6 +69,7 @@ async def update_user(user_id: int,
 @router.get("/diseases/{user_id}")
 async def get_all_user_diseases(user_id: int,
                                 session: SessionDep,
+                                request: Request,
                                 start_date: str = "-1",
                                 response_format: DiseasesResponseFormat = DiseasesResponseFormat.json,
                                 user_language: UserLanguage = UserLanguage.ru):
@@ -90,5 +89,4 @@ async def get_all_user_diseases(user_id: int,
         return StreamingResponse(content=make_in_memory_document(diseases, user_language),
                                  headers={'Content-Disposition': 'attachment; filename="diseases.docx"'})
     elif response_format == "html":
-        return HTMLResponse(content=await get_diseases_template(diseases),
-                            status_code=HTTPStatus.OK)
+        return await get_diseases_template(diseases, user_language, request)

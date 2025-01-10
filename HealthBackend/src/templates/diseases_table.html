@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{table_name}}</title>
+    <style>
+
+        *, *:before, *:after {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          background: #105469;
+          font-family: 'Open Sans', sans-serif;
+        }
+        table {
+          background: #012B39;
+          border-radius: 0.25em;
+          border-collapse: collapse;
+          margin: 1em;
+        }
+        th {
+          border-bottom: 1px solid #364043;
+          color: #E2B842;
+          font-size: 0.85em;
+          font-weight: 600;
+          padding: 0.5em 1em;
+          text-align: left;
+        }
+        td {
+          color: #fff;
+          font-weight: 400;
+          padding: 0.65em 1em;
+        }
+        .disabled td {
+          color: #4F5F64;
+        }
+        tbody tr {
+          transition: background 0.25s ease;
+        }
+        tbody tr:hover {
+          background: #014055;
+        }
+
+
+    </style>
+</head>
+<body>
+<!--<h1>{{table_name}}</h1>-->
+<table>
+    <thead>
+    <tr>
+        <th>{{title}}</th>
+        <th>{{description}}</th>
+        <th>{{treatment_plan}}</th>
+        <th>{{date_from}}</th>
+        <th>{{date_to}}</th>
+        <th>{{still_sick}}</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% for illness in diseases %}
+    <tr>
+        <td>{{ illness.title }}</td>
+        <td>{{ illness.description }}</td>
+        <td>{{ illness.treatment_plan }}</td>
+        <td>{{ illness.date_from }}</td>
+        <td>{{ illness.date_to if illness.date_to else "-" }}</td>
+        <td>{{ yes if illness.still_sick else no }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>

@@ -1,59 +1,20 @@
-from jinja2 import Template
-
-html_template = """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Illness Table</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-            text-align: left;
-        }
-    </style>
-</head>
-<body>
-    <h1>Illness Table</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Description</th>
-                <th>Date From</th>
-                <th>Date To</th>
-                <th>Still Sick</th>
-                <th>Title</th>
-                <th>Treatment Plan</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for illness in diseases %}
-            <tr>
-                <td>{{ illness.description }}</td>
-                <td>{{ illness.date_from }}</td>
-                <td>{{ illness.date_to if illness.date_to else "N/A" }}</td>
-                <td>{{ "Yes" if illness.still_sick else "No" }}</td>
-                <td>{{ illness.title }}</td>
-                <td>{{ illness.treatment_plan }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
-"""
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
+from src.utils.localization import constraints
 
 
-async def get_diseases_template(diseases: list[dict]) -> Template:
-    template = Template(html_template)
-    rendered_html = template.render(diseases=diseases)
-    return rendered_html
+async def get_diseases_template(diseases: list[dict], user_language: str, request) -> HTMLResponse:
+    templates = Jinja2Templates(directory='src/templates')
+    data = {
+        "diseases": diseases,
+        "table_name": constraints[user_language]['table_title'],
+        "title": constraints[user_language]['title'],
+        "description": constraints[user_language]['description'],
+        "treatment_plan": constraints[user_language]['treatment_plan'],
+        "date_from": constraints[user_language]['date_from'],
+        "date_to": constraints[user_language]['date_to'],
+        "still_sick": constraints[user_language]['still_sick'],
+        "yes": constraints[user_language]['yes'],
+        "no": constraints[user_language]['no']
+    }
+    return templates.TemplateResponse(name='diseases_table.html', request=request, context=data)
