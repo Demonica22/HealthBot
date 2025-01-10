@@ -15,10 +15,9 @@ API_PORT = getenv("API_PORT")
 API_URL = f"http://{API_HOST}:{API_PORT}"
 USERS_URL = API_URL + "/users/"
 DISEASES_URL = API_URL + "/diseases/"
-USER_DISEASES_URL = USERS_URL + f"diseases/"
 
 SERVER_URl = f"http://{SERVER_HOST}:{API_PORT}"
-USER_DISEASES_SERVER_URL = SERVER_URl + "/users" + "/diseases/"
+USER_DISEASES_SERVER_URL = SERVER_URl + "/diseases/"
 
 
 async def add_user(data: dict) -> bool:
@@ -65,7 +64,7 @@ async def get_user_diseases(user_id: int,
         start_date = (datetime.now() - timedelta(days=30 * period_for_load)).strftime("%d.%m.%Y")
 
     async with aiohttp.ClientSession() as session:
-        async with session.get(USER_DISEASES_URL + f"{user_id}", params={'start_date': start_date}) as response:
+        async with session.get(DISEASES_URL + f"{user_id}", params={'start_date': start_date}) as response:
             response.raise_for_status()
             diseases_list = await response.json()
             diseases_list[:] = [DiseaseSchema(**disease).model_dump() for disease in diseases_list]
@@ -83,6 +82,6 @@ async def get_user_diseases_url(user_id: int,
     else:
         start_date = (datetime.now() - timedelta(days=30 * period_for_load)).strftime("%d.%m.%Y")
     return USER_DISEASES_SERVER_URL + f"{user_id}" + "?" + urlencode({'start_date': start_date,
-                                                               'response_format': response_format,
-                                                               'user_language': user_language
-                                                               })
+                                                                      'response_format': response_format,
+                                                                      'user_language': user_language
+                                                                      })
