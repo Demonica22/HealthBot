@@ -34,8 +34,11 @@ async def get_all_user_diseases(user_id: int,
                                 request: Request,
                                 start_date: str = "-1",
                                 response_format: DiseasesResponseFormat = DiseasesResponseFormat.json,
-                                user_language: UserLanguage = UserLanguage.ru):
+                                user_language: UserLanguage = UserLanguage.ru,
+                                only_active: bool = False):
     query = select(Disease).where(Disease.user_id == user_id)
+    if only_active:
+        query = query.where(Disease.still_sick == True)
 
     if start_date != "-1":
         start_date = datetime.strptime(start_date, STRING_DATE_FORMAT)
