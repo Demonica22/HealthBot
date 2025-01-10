@@ -23,7 +23,13 @@ localization = {
     "height_field": "Height",
     "language_field": "Language",
     "check_personal_data": "View your information",
-    "user_info_message": "Your name: {}\nYour gender: {}\nYour language: {}\nYour weight: {}\nYour height: {}",
+    "user_info_message": "Your name: {name}\n"
+                         "Your gender: {gender}\n"
+                         "Your language: {language}\n"
+                         "Your weight: {weight}\n"
+                         "Your Height: {height}\n",
+    "user_info_current_diseases_message": "Current diseases: {diseases}",
+    "user_info_current_status_message": "You are Healthy!",
     "change_info_message": "Select the field you want to change:",
     "enter_new_data_for_change_message": "Enter new data for the field <b>{}</b>",
     "user_change_data_success_message": "The data has been updated successfully!",

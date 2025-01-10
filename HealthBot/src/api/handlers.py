@@ -85,3 +85,12 @@ async def get_user_diseases_url(user_id: int,
                                                                       'response_format': response_format,
                                                                       'user_language': user_language
                                                                       })
+
+
+async def get_user_active_diseases(user_id: int) -> list[dict]:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(DISEASES_URL_FOR_USER + f"{user_id}", params={'only_active': 1}) as response:
+            response.raise_for_status()
+            diseases_list = await response.json()
+            diseases_list[:] = [DiseaseSchema(**disease).model_dump() for disease in diseases_list]
+            return diseases_list

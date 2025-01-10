@@ -22,7 +22,13 @@ localization = {
     "height_field": "Рост",
     "language_field": "Язык",
     "check_personal_data": "Посмотреть свои данные",
-    "user_info_message": "Ваше имя: {}\nВаш пол: {}\nВаш язык: {}\nВаш вес: {}\nВаш рост: {}",
+    "user_info_message": "Ваше имя: {name}\n"
+                         "Ваш пол: {gender}\n"
+                         "Ваш язык: {language}\n"
+                         "Ваш вес: {weight}\n"
+                         "Ваш рост: {height}\n",
+    "user_info_current_diseases_message": "Ваши болезни: {diseases}",
+    "user_info_current_status_message": "Вы здоровы!",
     "change_info_message": "Выберите поле, которое хотите поменять:",
     "enter_new_data_for_change_message": "Введите новые данные для поля <b>{}</b>",
     "user_change_data_success_message": "Данные успешно обновлены!",

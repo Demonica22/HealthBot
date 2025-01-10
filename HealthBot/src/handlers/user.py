@@ -5,7 +5,7 @@ from aiogram import Router, F
 
 from src.states.user_registration import UserRegistration
 from src.states.user_change_data import UserChangeData
-from src.api.handlers import add_user, get_user_by_id, update_user
+from src.api.handlers import add_user, get_user_by_id, update_user, get_user_active_diseases
 from src.localizations import get_text, AVAILABLE_LANGS, DEFAULT_LANG
 from .main_menu import send_main_menu
 
@@ -96,14 +96,16 @@ async def get_info(callback: CallbackQuery):
     ]
 
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    user_info['language'] = AVAILABLE_LANGS.get(user_info['language'], user_info['language'])
+    diseases: str = ", ".join([disease['title'] for disease in
+                               (await get_user_active_diseases(callback.message.chat.id))])
+    additional_message = get_text("user_info_current_status_message", user_language)
+    if diseases:
+        additional_message = get_text("user_info_current_diseases_message", user_language).format(diseases=diseases)
+
     await callback.message.edit_text(
-        get_text("user_info_message", user_language).format(user_info['name'],
-                                                            user_info['gender'],
-                                                            AVAILABLE_LANGS.get(user_info['language'],
-                                                                                user_info['language']),
-                                                            user_info['weight'],
-                                                            user_info['height'],
-                                                            ), reply_markup=inline_keyboard)
+        get_text("user_info_message", user_language).format(**user_info) + additional_message,
+        reply_markup=inline_keyboard)
 
 
 @user_router.callback_query(UserChangeData.field_name)
