@@ -28,6 +28,16 @@ async def add_disease(data: DiseaseSchemaAdd, session: SessionDep):
     return new_disease
 
 
+@router.get("/{disease_id}")
+async def get_disease(
+        disease_id: int,
+        session: SessionDep):
+    query = select(Disease).where(Disease.id == disease_id)
+    result = await session.execute(query)
+    disease = result.scalars().first()
+    return disease
+
+
 @router.get("/for_user/{user_id}")
 async def get_all_user_diseases(user_id: int,
                                 session: SessionDep,
@@ -55,3 +65,21 @@ async def get_all_user_diseases(user_id: int,
                                  headers={'Content-Disposition': 'attachment; filename="diseases.docx"'})
     elif response_format == "html":
         return await get_diseases_template(diseases, user_language, request)
+
+
+@router.patch("/mark_as_finished/{disease_id}")
+async def mark_disease_as_finished(
+        disease_id: int,
+        session: SessionDep,
+        update_date: datetime = None):
+    try:
+        if update_date is None:
+            update_date = datetime.now()
+        query = update(Disease).where(Disease.id == disease_id).values(still_sick=False, date_to=update_date)
+        await session.execute(query)
+    except Exception as ex:
+        await session.rollback()
+        return {"success": False, "message": ex}
+    else:
+        await session.commit()
+        return {"success": True}
