@@ -1,8 +1,11 @@
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from aiogram.fsm.context import FSMContext
+from aiogram.filters import Command
 from aiogram import Router, F
 
 from src.localizations import get_text
 from src.api.handlers import get_user_by_id
+from src.utils.chat_keyboard_clearer import remove_chat_buttons
 
 main_router = Router()
 
@@ -34,3 +37,13 @@ async def send_main_menu(message: Message, edit: bool = False):
 @main_router.callback_query(F.data == "to_main_menu")
 async def to_main_menu(callback: CallbackQuery):
     await send_main_menu(callback.message, edit=True)
+
+
+@main_router.message(Command("exit"))
+@main_router.message(Command("menu"))
+async def cancel_operation(message: Message, state: FSMContext):
+    user_language: str = (await get_user_by_id(message.chat.id))['language']
+
+    await state.clear()
+    await remove_chat_buttons(message, user_language)
+    await send_main_menu(message)

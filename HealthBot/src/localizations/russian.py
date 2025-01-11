@@ -51,7 +51,7 @@ localization = {
     "disease_still_sick_message": "До сих пор болеете?",
     "disease_add_success_message": "Болезнь успешно добавлена!",
     "disease_choose_inline_tip": "Введите свою болезнь или выберите из списка",
-    "default_diseases_list": ["ОРВИ", "Грипп", "Аллергия", "Перелом", "ССЗ"],
+    "default_diseases_list": ["ОРВИ", "Грипп", "Аллергия", "Перелом", "Сердечно сосудистые заболевания"],
 
     "disease_date_choose_inline_tip": "Введите дату или выберите из списка",
     "disease_today_date_word": "Сегодня",
