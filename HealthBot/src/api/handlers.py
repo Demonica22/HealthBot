@@ -18,6 +18,7 @@ DISEASES_URL = API_URL + "/diseases/"
 DISEASES_URL_FOR_USER = DISEASES_URL + "for_user/"
 SERVER_URl = f"http://{SERVER_HOST}:{API_PORT}"
 USER_DISEASES_SERVER_URL = SERVER_URl + "/diseases/" + "for_user/"
+FINISH_DISEASE_URL = DISEASES_URL + "mark_as_finished/"
 
 
 async def add_user(data: dict) -> bool:
@@ -44,6 +45,8 @@ async def update_user(user_id: int,
                                      field: new_data
                                  }) as response:
             data = await response.json()
+            if not data['success']:
+                raise Exception("Ошибка обновления данных пользователя")
             response.raise_for_status()
             logging.debug(f"Updated {user_id}, set {field} = {new_data}")
 
@@ -94,3 +97,21 @@ async def get_user_active_diseases(user_id: int) -> list[dict]:
             diseases_list = await response.json()
             diseases_list[:] = [DiseaseSchema(**disease).model_dump() for disease in diseases_list]
             return diseases_list
+
+
+async def finish_disease(disease_id: int, update_date: datetime = None):
+    async with aiohttp.ClientSession() as session:
+        async with session.patch(FINISH_DISEASE_URL + f"{disease_id}") as response:
+            data = await response.json()
+            if not data['success']:
+                raise Exception("Ошибка завершения болезни")
+            response.raise_for_status()
+            logging.debug(f"Болезнь {disease_id} помечена как завершенная")
+
+
+async def get_disease(disease_id: int):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(DISEASES_URL + f"{disease_id}") as response:
+            if response.status == HTTPStatus.NOT_FOUND:
+                return None
+            return await response.json()

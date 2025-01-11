@@ -21,7 +21,6 @@ localization = {
     "weight_field": "Вес",
     "height_field": "Рост",
     "language_field": "Язык",
-    "check_personal_data": "Посмотреть свои данные",
     "user_info_message": "Ваше имя: {name}\n"
                          "Ваш пол: {gender}\n"
                          "Ваш язык: {language}\n"
@@ -37,7 +36,10 @@ localization = {
     "back_button": "Назад",
     "to_main_menu_button": "В главное меню",
     "add_disease_button": "Добавить болезнь",
-    "get_diseases_button": "Посмотреть все болезни",
+    "get_diseases_button": "Все болезни",
+    "get_active_diseases_button": "Текущие болезни",
+    "check_personal_data_button": "Свои данные",
+    "mark_disease_as_finished": "Завершить болезнь",
     "yes": "Да",
     "no": "Нет",
 
@@ -58,6 +60,7 @@ localization = {
     "disease_yesterday_date_word": "Вчера",
 
     "get_diseases_message": "<b>Вот список всех ваших болезней:</b>\n",
+    "get_active_diseases_message": "<b>Вот список ваших активных болезней:</b>\n",
     "get_diseases_empty_message": "Я не знаю ни одной вашей болезни!\nВы здоровы!",
     "diseases_filename": "Болезни.docx",
     "diseases_list_title": "Название",
@@ -74,6 +77,8 @@ localization = {
                                    ("Word Таблица", "word")],
     "diseases_page_message": "Вот таблица с вашими болезнями",
 
+    "diseases_choose_to_finish": "Выберите какая из болезней закончилась:\n",
+    "diseases_finished_message": "Болезнь <b>{}</b> помечена как оконченная",
     # название для кнопки + длительность периода в месяцах.
     "diseases_list_of_periods": [("1 месяц", 1),
                                  ("3 месяца", 3),

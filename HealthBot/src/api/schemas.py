@@ -4,6 +4,7 @@ from datetime import datetime
 
 class DiseaseSchema(BaseModel):
     user_id: int
+    id: int
 
     title: str
     description: str

@@ -22,7 +22,6 @@ localization = {
     "weight_field": "Weight",
     "height_field": "Height",
     "language_field": "Language",
-    "check_personal_data": "View your information",
     "user_info_message": "Your name: {name}\n"
                          "Your gender: {gender}\n"
                          "Your language: {language}\n"
@@ -39,7 +38,11 @@ localization = {
     "back_button": "Back",
     "to_main_menu_button": "To Main Menu",
     "add_disease_button": "Add a disease",
-    "get_diseases_button": "View all diseases",
+    "get_diseases_button": "All diseases",
+    "get_active_diseases_button": "Active diseases",
+    "check_personal_data_button": "Your information",
+    "mark_disease_as_finished": "Finish a disease",
+
     "yes": "Yes",
     "no": "No",
 
@@ -60,6 +63,7 @@ localization = {
     "disease_yesterday_date_word": "Yesterday",
 
     "get_diseases_message": "<b>Here is a list of all your diseases:</b>\n",
+    "get_active_diseases_message": "<b>Here is a list of your active diseases:</b>\n",
     "diseases_filename": "Diseases.docx",
     "get_diseases_empty_message": "I don't know any of your illnesses!\nYou are healthy!",
     "diseases_list_title": "Title",
@@ -75,6 +79,8 @@ localization = {
     "diseases_list_message_type": [("HTML page", "html"), ("Message in Telegram", "telegram"),
                                    ("Word table", "word")],
     "diseases_page_message": "Here is your diseases page",
+    "diseases_choose_to_finish": "Choose disease to finish:\n",
+    "diseases_finished_message": "Disease <b>{}</b> was marked as finished",
     # название для кнопки + длительность периода в месяцах.
     "diseases_list_of_periods": [("1 month", 1),
                                  ("3 months", 3),

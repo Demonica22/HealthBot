@@ -16,14 +16,17 @@ async def send_main_menu(message: Message, edit: bool = False):
 
     buttons: list[list[InlineKeyboardButton]] = [
         [InlineKeyboardButton(
-            text=get_text("check_personal_data", user_language),
-            callback_data="check_personal_data")],
-        [InlineKeyboardButton(
             text=get_text("add_disease_button", user_language),
             callback_data="add_disease")],
         [InlineKeyboardButton(
+            text=get_text("get_active_diseases_button", user_language),
+            callback_data="get_active_diseases")],
+        [InlineKeyboardButton(
             text=get_text("get_diseases_button", user_language),
             callback_data="get_diseases")],
+        [InlineKeyboardButton(
+            text=get_text("check_personal_data_button", user_language),
+            callback_data="check_personal_data")],
     ]
 
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)

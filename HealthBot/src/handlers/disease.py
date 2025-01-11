@@ -7,12 +7,20 @@ from aiogram.fsm.context import FSMContext
 from aiogram import Router, F
 from aiogram.utils.markdown import hlink
 
-from src.api.handlers import get_user_by_id, add_disease, get_user_diseases, get_user_diseases_url
+from src.api.handlers import (
+    get_user_by_id,
+    add_disease,
+    get_user_diseases,
+    get_user_diseases_url,
+    get_user_active_diseases,
+    finish_disease,
+    get_disease,
+)
 from src.localizations import get_text, AVAILABLE_LANGS, DEFAULT_LANG
 from src.states.disease_add import DiseaseAdd
 from src.states.disease_request import DiseaseRequest
 from src.utils.regex import DATE_REGEX
-from src.utils.message_formatters import generate_diseases_message
+from src.utils.message_formatters import generate_diseases_message, generate_active_diseases_message
 from src.utils.chat_keyboard_clearer import remove_chat_buttons
 from src.utils.keyboards import generate_days_keyboard
 from src.utils.date_checker import check_message_for_date
@@ -245,3 +253,88 @@ async def get_diseases(callback: CallbackQuery, state: FSMContext):
             reply_markup=inline_keyboard)
 
     await state.clear()
+
+
+@disease_router.callback_query(F.data == "get_active_diseases")
+async def get_active_diseases(callback: CallbackQuery):
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+
+    buttons = [
+
+        [InlineKeyboardButton(text=get_text("back_button", user_language),
+                              callback_data="back_diseases_menu")],
+
+    ]
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    try:
+        diseases = await get_user_active_diseases(callback.message.chat.id)
+    except Exception as x:
+        logging.error(f"Ошибка получения активных болезней: {x}")
+        await callback.message.answer(text=get_text("unexpected_error", user_language).format(x),
+                                      reply_markup=inline_keyboard)
+        return
+    if diseases:
+        buttons.insert(0, [InlineKeyboardButton(text=get_text("mark_disease_as_finished", user_language),
+                                                callback_data="mark_disease_as_finished")])
+        inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    await callback.message.edit_text(
+        get_text("get_active_diseases_message", user_language) + generate_diseases_message(diseases, user_language),
+        reply_markup=inline_keyboard)
+
+
+@disease_router.callback_query(F.data == "mark_disease_as_finished")
+async def mark_disease_as_finished(callback: CallbackQuery):
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+
+    buttons = [
+
+        [InlineKeyboardButton(text=get_text("back_button", user_language),
+                              callback_data="back_diseases_mark")],
+
+    ]
+
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    try:
+        diseases = await get_user_active_diseases(callback.message.chat.id)
+    except Exception as x:
+        logging.error(f"Ошибка получения активных болезней: {x}")
+        await callback.message.answer(text=get_text("unexpected_error", user_language).format(x),
+                                      reply_markup=inline_keyboard)
+        return
+    for i, disease in enumerate(diseases):
+        button = [InlineKeyboardButton(text=f"№{i + 1} {disease['title']}",
+                                       callback_data=f"disease_id_{disease['id']}")]
+        buttons.insert(i, button)
+
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    await callback.message.edit_text(
+        get_text("diseases_choose_to_finish", user_language) + generate_active_diseases_message(diseases,
+                                                                                                user_language),
+        reply_markup=inline_keyboard)
+
+
+@disease_router.callback_query(F.data.startswith("disease_id"))
+async def mark_disease_as_finished(callback: CallbackQuery):
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+
+    disease_id = int(callback.data.split("_")[-1])
+    buttons = [
+        [InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
+                              callback_data="to_main_menu")],
+    ]
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    try:
+        await finish_disease(disease_id)
+    except Exception as x:
+        logging.error(f"Ошибка завершения болезни: {x}")
+        await callback.message.answer(text=get_text("unexpected_error", user_language).format(x),
+                                      reply_markup=inline_keyboard)
+        return
+    disease = await get_disease(disease_id)
+
+    await callback.message.edit_text(get_text("diseases_finished_message", user_language).format(disease['title']),
+                                     reply_markup=inline_keyboard)

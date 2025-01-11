@@ -1,5 +1,6 @@
 from src.localizations import get_text
 
+
 def generate_diseases_message(diseases: list[dict],
                               user_language: str) -> str:
     if user_language == "ru":
@@ -24,5 +25,18 @@ def generate_diseases_message(diseases: list[dict],
                         f"{days_word}\n")
         else:
             message += f"<b>{get_text("diseases_list_still_sick", user_language)}:</b>\n{get_text("yes", user_language)}\n"
+        message += f"\n--------------------\n"
+    return message
+
+
+def generate_active_diseases_message(diseases: list[dict],
+                                     user_language: str) -> str:
+    message = "--------------------\n"
+    for i, disease in enumerate(diseases):
+        message += (
+            f"<b>№{i + 1}</b>\n"
+            f"<b>{get_text("diseases_list_title", user_language)}:</b>\n{disease['title']}\n"
+            f"<b>{get_text("diseases_list_start_date", user_language)}:</b>\n{disease['date_from']}\n"
+        )
         message += f"\n--------------------\n"
     return message
