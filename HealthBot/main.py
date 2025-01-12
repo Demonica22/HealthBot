@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
-from src.handlers import routers
-from src.startup import on_startup
+from src.routers import routers
+from src.lifespan import on_startup, on_shutdown
 from src.custom_logging import LoggingMiddleware
 
 
@@ -16,6 +16,7 @@ async def main():
     dp = Dispatcher()
 
     dp.startup.register(on_startup)
+    dp.shutdown.register(on_shutdown)
     dp.message.middleware(LoggingMiddleware())
 
     for router in routers:

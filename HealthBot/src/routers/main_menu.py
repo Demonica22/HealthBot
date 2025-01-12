@@ -25,6 +25,9 @@ async def send_main_menu(message: Message, edit: bool = False):
             text=get_text("get_diseases_button", user_language),
             callback_data="get_diseases")],
         [InlineKeyboardButton(
+            text="Уведомления",
+            callback_data="make_notification")],
+        [InlineKeyboardButton(
             text=get_text("check_personal_data_button", user_language),
             callback_data="check_personal_data")],
     ]

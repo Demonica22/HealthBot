@@ -5,7 +5,6 @@ from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, C
     KeyboardButton, ReplyKeyboardRemove, URLInputFile
 from aiogram.fsm.context import FSMContext
 from aiogram import Router, F
-from aiogram.utils.markdown import hlink
 
 from src.api.handlers import (
     get_user_by_id,
