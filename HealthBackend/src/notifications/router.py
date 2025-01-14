@@ -1,0 +1,35 @@
+from fastapi import APIRouter, status, Request
+from sqlalchemy import select, update
+from sqlalchemy.orm import selectinload
+
+from src.database.session import SessionDep
+from src.notifications.models import Notification, NotificationTime
+from src.notifications.schemas import NotificationAddSchema, NotificationSchema
+
+router = APIRouter(prefix="/notifications", tags=['Notifications'])
+
+
+@router.post("/",
+             response_model=NotificationSchema,
+             status_code=status.HTTP_201_CREATED)
+async def add_notification(data: NotificationAddSchema, session: SessionDep):
+    data = data.model_dump()
+    data['time_notifications'] = [NotificationTime(**{"time": elem}) for elem in data['time_notifications']]
+    notification = Notification(
+        **data
+    )
+    session.add(notification)
+    await session.commit()
+
+    return notification
+
+
+@router.get("/for_user/{user_id}",
+            response_model=list[NotificationSchema],
+            status_code=status.HTTP_200_OK)
+async def get_notifications_for_user(user_id: int, session: SessionDep):
+    query = select(Notification).where(Notification.user_id == user_id).options(
+        selectinload(Notification.time_notifications))
+    result = await session.execute(query)
+
+    return result.scalars().all()

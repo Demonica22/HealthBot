@@ -8,6 +8,7 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     diseases: Mapped[list["Disease"]] = relationship(back_populates="user")
+    notifications: Mapped[list["Notification"]] = relationship(back_populates="user")
     name: Mapped[str]
     gender: Mapped[str]
     language: Mapped[str]
