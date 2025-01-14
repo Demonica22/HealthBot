@@ -41,7 +41,8 @@ async def send_main_menu(message: Message, edit: bool = False):
 
 
 @main_router.callback_query(F.data == "to_main_menu")
-async def to_main_menu(callback: CallbackQuery):
+async def to_main_menu(callback: CallbackQuery, state: FSMContext):
+    await state.clear() # FIXME: надо ли? не ломает ли?
     await send_main_menu(callback.message, edit=True)
 
 

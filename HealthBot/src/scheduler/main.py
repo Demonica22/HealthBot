@@ -9,11 +9,12 @@ async def start_up(bot):
     from src.routers.notifications import schedule_notifications
     scheduler.start()
     # load tasks from api
-    tasks = [{"id": 1,
-              "end_date": datetime.datetime.now() + datetime.timedelta(days=1),
-              "user_id": 438053520,
-              "message_text": "Уведомление тестовое"
-              }]
+    tasks = []
+    [{"id": 1,
+      "end_date": datetime.datetime.now() + datetime.timedelta(days=1),
+      "user_id": 438053520,
+      "message_text": "Уведомление тестовое"
+      }]
     outdated_notifications = await schedule_notifications(bot, tasks)
     # for task in tasks:
     #     scheduler.add_job(

@@ -1,8 +1,14 @@
 import logging
 import re
 
-from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, ReplyKeyboardMarkup, \
-    KeyboardButton, ReplyKeyboardRemove, URLInputFile
+from aiogram.types import (
+    Message,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    CallbackQuery,
+    ReplyKeyboardRemove,
+    URLInputFile
+)
 from aiogram.fsm.context import FSMContext
 from aiogram import Router, F
 
@@ -15,37 +21,28 @@ from src.api.handlers import (
     finish_disease,
     get_disease,
 )
-from src.localizations import get_text, AVAILABLE_LANGS, DEFAULT_LANG
+from src.localizations import get_text
 from src.states.disease_add import DiseaseAdd
 from src.states.disease_request import DiseaseRequest
 from src.utils.regex import DATE_REGEX
 from src.utils.message_formatters import generate_diseases_message, generate_active_diseases_message
 from src.utils.chat_keyboard_clearer import remove_chat_buttons
-from src.utils.keyboards import generate_days_keyboard
+from src.utils.keyboards import generate_days_keyboard, generate_reply_keyboard
 from src.utils.date_checker import check_message_for_date
+from src.constants import DEFAULT_DISEASES_LIST_ROW_SIZE
 
 disease_router = Router()
 
-default_diseases_list_row_size = 2
-
 
 @disease_router.callback_query(F.data == "add_disease")
-async def change_info(callback: CallbackQuery, state: FSMContext):
+async def add_disease(callback: CallbackQuery, state: FSMContext):
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
-    buttons = []
-    button_row = []
-    for label in get_text("default_diseases_list", user_language):
-        button_row.append(KeyboardButton(text=label))
+    keyboard = generate_reply_keyboard(
+        labels_for_buttons=get_text("default_diseases_list", user_language),
+        inline_tip=get_text("disease_choose_inline_tip", user_language),
+        row_size=DEFAULT_DISEASES_LIST_ROW_SIZE
+    )
 
-        if len(button_row) == default_diseases_list_row_size:
-            buttons.append(button_row)
-            button_row = []
-    if button_row:
-        buttons.append(button_row)
-    keyboard = ReplyKeyboardMarkup(keyboard=buttons,
-                                   resize_keyboard=True,
-                                   one_time_keyboard=True,
-                                   input_field_placeholder=get_text("disease_choose_inline_tip", user_language))
     await callback.message.answer(get_text("add_disease_message", user_language), reply_markup=keyboard)
 
     await state.set_state(DiseaseAdd.title)
@@ -168,7 +165,7 @@ async def diseases_time_menu(callback: CallbackQuery, state: FSMContext):
     for label, duration in get_text("diseases_list_of_periods", user_language):
         button_row.append(InlineKeyboardButton(text=label,
                                                callback_data=f"period_{duration}"))
-        if len(button_row) == default_diseases_list_row_size:
+        if len(button_row) == DEFAULT_DISEASES_LIST_ROW_SIZE:
             buttons.append(button_row)
             button_row = []
     if button_row:

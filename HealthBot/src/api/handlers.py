@@ -19,6 +19,8 @@ DISEASES_URL_FOR_USER = DISEASES_URL + "for_user/"
 SERVER_URl = f"http://{SERVER_HOST}:{API_PORT}"
 USER_DISEASES_SERVER_URL = SERVER_URl + "/diseases/" + "for_user/"
 FINISH_DISEASE_URL = DISEASES_URL + "mark_as_finished/"
+NOTIFICATIONS_URL = API_URL + "/notifications/"
+NOTIFICATIONS_FOR_USER = NOTIFICATIONS_URL + "for_user/"
 
 
 async def add_user(data: dict) -> bool:
@@ -114,4 +116,19 @@ async def get_disease(disease_id: int):
         async with session.get(DISEASES_URL + f"{disease_id}") as response:
             if response.status == HTTPStatus.NOT_FOUND:
                 return None
+            return await response.json()
+
+
+async def add_notification(notification_data: dict) -> list[dict]:
+    async with aiohttp.ClientSession() as session:
+        logging.debug(f"Notification add: {notification_data}")
+        async with session.post(NOTIFICATIONS_URL, json=notification_data) as response:
+            response.raise_for_status()
+            return await response.json()
+
+
+async def get_user_notifications(user_id: int) -> list[dict]:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(NOTIFICATIONS_FOR_USER + f"{user_id}") as response:
+            response.raise_for_status()
             return await response.json()
