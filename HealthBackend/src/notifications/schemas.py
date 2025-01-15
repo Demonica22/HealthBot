@@ -12,7 +12,7 @@ class NotificationAddSchema(BaseModel):
     user_id: int
     medicine_name: str
     end_date: datetime.datetime
-    time_notifications: list[str] = None
+    time_notifications: list[NotificationTimeSchema] = None
 
     @field_validator("end_date", mode='before')
     def timestamp_to_date(cls, date) -> datetime.datetime:

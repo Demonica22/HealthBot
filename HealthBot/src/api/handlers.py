@@ -104,10 +104,10 @@ async def get_user_active_diseases(user_id: int) -> list[dict]:
 async def finish_disease(disease_id: int, update_date: datetime = None):
     async with aiohttp.ClientSession() as session:
         async with session.patch(FINISH_DISEASE_URL + f"{disease_id}") as response:
+            response.raise_for_status()
             data = await response.json()
             if not data['success']:
                 raise Exception("Ошибка завершения болезни")
-            response.raise_for_status()
             logging.debug(f"Болезнь {disease_id} помечена как завершенная")
 
 
@@ -130,5 +130,22 @@ async def add_notification(notification_data: dict) -> list[dict]:
 async def get_user_notifications(user_id: int) -> list[dict]:
     async with aiohttp.ClientSession() as session:
         async with session.get(NOTIFICATIONS_FOR_USER + f"{user_id}") as response:
+            response.raise_for_status()
+            return await response.json()
+
+
+async def delete_notification(notification_id: int) -> None:
+    async with aiohttp.ClientSession() as session:
+        logging.debug(f"Notification deleted: {notification_id}")
+        async with session.delete(NOTIFICATIONS_URL + f"{notification_id}") as response:
+            response.raise_for_status()
+            data = await response.json()
+            if not data['success']:
+                raise Exception("Ошибка удаления уведомления")
+
+
+async def get_all_notifications() -> list[dict]:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(NOTIFICATIONS_URL) as response:
             response.raise_for_status()
             return await response.json()

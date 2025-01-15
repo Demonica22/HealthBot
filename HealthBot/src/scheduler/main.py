@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -7,21 +8,15 @@ scheduler = AsyncIOScheduler()
 
 async def start_up(bot):
     from src.routers.notifications import schedule_notifications
+    from src.api.handlers import get_all_notifications, delete_notification
     scheduler.start()
     # load tasks from api
-    tasks = []
-    [{"id": 1,
-      "end_date": datetime.datetime.now() + datetime.timedelta(days=1),
-      "user_id": 438053520,
-      "message_text": "Уведомление тестовое"
-      }]
-    outdated_notifications = await schedule_notifications(bot, tasks)
-    # for task in tasks:
-    #     scheduler.add_job(
-    #         func=send_notification,
-    #         kwargs={"bot": callback.message.bot,
-    #                 "user_id": callback.message.chat.id},
-    #         trigger=CronTrigger(minute="*"),  # Время выполнения: 12:00, 16:00, 20:00
-    #         end_date=end_date,
-    #         id="task_once"
-    #     )
+    notifications = await get_all_notifications()
+    for notification in notifications:
+        notification['end_date'] = datetime.datetime.fromisoformat(notification['end_date']).strftime("%d.%m.%Y")
+    outdated_notifications_ids = await schedule_notifications(bot, notifications)
+    for id in outdated_notifications_ids:
+        try:
+            await delete_notification(notification_id=int(id))
+        except Exception as x:
+            logging.error(f"Ошибка удаления уведомления {id}: {x}")

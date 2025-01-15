@@ -15,11 +15,12 @@ from apscheduler.triggers.cron import CronTrigger
 
 from src.scheduler.main import scheduler
 from src.localizations import get_text
-from src.api.handlers import get_user_by_id, add_notification, get_user_notifications
+from src.api.handlers import get_user_by_id, add_notification, get_user_notifications, delete_notification
 from src.states.notification_medicine_add import MedicineNotificationAdd
 from src.constants import DEFAULT_NOTIFICATIONS_DURATION_ROW_SIZE, DEFAULT_NOTIFICATIONS_TIMES_A_DAY_ROW_SIZE
 from src.utils.keyboards import generate_reply_keyboard
 from src.utils.regex import TIME_REGEX
+from src.utils.message_formatters import generate_notifications_message
 
 notification_router = Router()
 
@@ -32,8 +33,12 @@ async def send_notification(bot: Bot,
 
 async def schedule_notification(bot: Bot,
                                 user_id: int,
+                                user_language: str,
                                 end_date: datetime.datetime,
-                                message_text: str = None):
+                                time: tuple[int],
+                                medicine_name: str = None):
+    message_text = get_text("notifications_message", user_language).format(medicine_name)
+    logging.debug(f'Scheduled notification for {user_id}, end_date = {end_date}, with text = {message_text}')
     scheduler.add_job(
         func=send_notification,
         kwargs={
@@ -41,8 +46,7 @@ async def schedule_notification(bot: Bot,
             "user_id": user_id,
             "message_text": message_text
         },
-        trigger=CronTrigger(minute="*"),  # Время выполнения: 12:00, 16:00, 20:00
-        end_date=end_date
+        trigger=CronTrigger(hour=time[0], minute=time[1], end_date=end_date)
     )
 
 
@@ -50,13 +54,20 @@ async def schedule_notifications(bot: Bot,
                                  data: list[dict]) -> list[str]:
     outdated_notifications = []
     for notification_data in data:
-        if notification_data['end_date'] < datetime.datetime.now():
+        end_date_obj = datetime.datetime.strptime(notification_data['end_date'], "%d.%m.%Y")
+        if end_date_obj < datetime.datetime.now():
             outdated_notifications.append(notification_data['id'])
             continue
-        await schedule_notification(bot,
-                                    user_id=notification_data['user_id'],
-                                    end_date=notification_data['end_date'],
-                                    message_text=notification_data['message_text'])
+        user_language: str = (await get_user_by_id(notification_data['user_id']))['language']
+
+        for time_data in notification_data['time_notifications']:
+            time = tuple(map(int, time_data['time'].split(":")))
+            await schedule_notification(bot,
+                                        user_id=notification_data['user_id'],
+                                        user_language=user_language,
+                                        end_date=end_date_obj,
+                                        time=time,
+                                        medicine_name=notification_data['medicine_name'])
 
     return outdated_notifications
 
@@ -85,10 +96,75 @@ async def notification_menu(callback: CallbackQuery):
 
 
 @notification_router.callback_query(F.data == "get_all_notifications")
-async def get_all_notifications(callback: CallbackQuery, state: FSMContext):
+async def get_all_notifications(callback: CallbackQuery):
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
     notifications = await get_user_notifications(user_id=callback.message.chat.id)
-    await callback.message.answer(f"Вот все ваши уведомления:\n {notifications}")
+    buttons: list[list[InlineKeyboardButton]] = []
+    if notifications:
+        buttons.append([InlineKeyboardButton(text=get_text("notifications_delete_button", user_language),
+                                             callback_data="notifications_delete_button")])
+    buttons.append([InlineKeyboardButton(text=get_text("back_button", user_language),
+                                             callback_data="back_notifications_menu")])
+    buttons.append([InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
+                                         callback_data="to_main_menu")])
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    await callback.message.edit_text(text=generate_notifications_message(notifications, user_language),
+                                     reply_markup=inline_keyboard)
+
+
+@notification_router.callback_query(F.data == "notifications_delete_button")
+async def notifications_delete(callback: CallbackQuery):
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+    buttons = [
+        [InlineKeyboardButton(text=get_text("back_button", user_language),
+                              callback_data="back_notifications_delete")],
+    ]
+
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    try:
+        notifications = await get_user_notifications(user_id=callback.message.chat.id)
+    except Exception as x:
+        logging.error(f"Ошибка получения уведомлений : {x}")
+        await callback.message.answer(text=get_text("unexpected_error", user_language).format(x),
+                                      reply_markup=inline_keyboard)
+        return
+    for i, notification in enumerate(notifications):
+        button = [InlineKeyboardButton(text=f"№{i + 1} {notification['medicine_name']}",
+                                       callback_data=f"notification_id_{notification['id']}")]
+        buttons.insert(i, button)
+
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    await callback.message.edit_text(
+        get_text("notifications_choose_to_delete", user_language) +
+        generate_notifications_message(notifications,
+                                       user_language),
+        reply_markup=inline_keyboard)
+
+
+@notification_router.callback_query(F.data.startswith("notification_id"))
+async def delete_notification_handler(callback: CallbackQuery):
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+
+    notification_id = int(callback.data.split("_")[-1])
+    buttons = [
+        [InlineKeyboardButton(text=get_text("back_button", user_language),
+                              callback_data="back_notification_deleted")],
+        [InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
+                              callback_data="to_main_menu")],
+    ]
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    try:
+        await delete_notification(notification_id)
+    except Exception as x:
+        logging.error(f"Ошибка завершения болезни: {x}")
+        await callback.message.answer(text=get_text("unexpected_error", user_language).format(x),
+                                      reply_markup=inline_keyboard)
+        return
+
+    await callback.message.edit_text(get_text("notification_deleted_message", user_language),
+                                     reply_markup=inline_keyboard)
 
 
 @notification_router.callback_query(F.data == "make_medicine_notification")
@@ -165,12 +241,12 @@ async def choose_notification_times(message: Message, state: FSMContext):
 
     new_time = message.text
     if times := await state.get_value("time_notifications"):
-        if times[-1] > new_time:
+        if times[-1]['time'] >= new_time:
             await message.answer(get_text("notifications_time_increase_error", user_language))
             return
-        times.append(new_time)
+        times.append({"time": new_time})
     else:
-        times = [new_time]
+        times = [{"time": new_time}]
 
     await state.update_data(time_notifications=times)
 
@@ -179,7 +255,7 @@ async def choose_notification_times(message: Message, state: FSMContext):
     if times_a_day == len(times):
         # мы получили все times_a_day времен и можем сохранять нотификацию
         data = await state.get_data()
-        times_string = ", ".join([f"{t}" for t in times])
+        times_string = ", ".join([f"{t['time']}" for t in times])
         buttons: list[list[InlineKeyboardButton]] = [
             [InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
                                   callback_data="to_main_menu")]
@@ -195,7 +271,10 @@ async def choose_notification_times(message: Message, state: FSMContext):
         except Exception as x:
             logging.error(x)
             await message.answer("Ошибочка")
+            await state.clear()
             return
+        await schedule_notifications(bot=message.bot,
+                                     data=[data])
         await message.answer(
             get_text("notifications_add_successful_message", user_language).format(
                 medicine_name=data['medicine_name'],

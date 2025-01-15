@@ -10,7 +10,7 @@ from src.routers import routers
 from src.lifespan import on_startup, on_shutdown
 from src.custom_logging import LoggingMiddleware
 
-heh
+
 async def main():
     bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher()

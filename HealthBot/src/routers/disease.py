@@ -35,7 +35,7 @@ disease_router = Router()
 
 
 @disease_router.callback_query(F.data == "add_disease")
-async def add_disease(callback: CallbackQuery, state: FSMContext):
+async def add_disease_handler(callback: CallbackQuery, state: FSMContext):
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
     keyboard = generate_reply_keyboard(
         labels_for_buttons=get_text("default_diseases_list", user_language),
