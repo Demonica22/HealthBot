@@ -39,7 +39,7 @@ async def schedule_notification(bot: Bot,
                                 time: tuple[int],
                                 medicine_name: str = None):
     message_text = get_text("notifications_message", user_language).format(medicine_name)
-    logging.debug(f'Scheduled notification for {user_id}, end_date = {end_date}, with text = {message_text}')
+    logging.debug(f'Scheduled notification at {time} for {user_id}, end_date = {end_date}, with text = {message_text}')
     scheduler.add_job(
         func=send_notification,
         kwargs={
