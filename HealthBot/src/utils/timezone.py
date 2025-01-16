@@ -1,3 +1,3 @@
 import datetime
 
-MSK = datetime.timedelta(hours=+3)
+MSK = datetime.timezone(datetime.timedelta(hours=+3), name="CST")
