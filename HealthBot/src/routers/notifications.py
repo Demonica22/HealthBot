@@ -22,6 +22,7 @@ from src.utils.keyboards import generate_reply_keyboard
 from src.utils.regex import TIME_REGEX
 from src.utils.message_formatters import generate_notifications_message
 from src.utils.timezone import MSK
+
 notification_router = Router()
 
 
@@ -104,7 +105,7 @@ async def get_all_notifications(callback: CallbackQuery):
         buttons.append([InlineKeyboardButton(text=get_text("notifications_delete_button", user_language),
                                              callback_data="notifications_delete_button")])
     buttons.append([InlineKeyboardButton(text=get_text("back_button", user_language),
-                                             callback_data="back_notifications_menu")])
+                                         callback_data="back_notifications_menu")])
     buttons.append([InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
                                          callback_data="to_main_menu")])
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
@@ -238,15 +239,15 @@ async def choose_notification_times(message: Message, state: FSMContext):
     if not re.match(TIME_REGEX, message.text):
         await message.answer(get_text("notifications_time_format_error", user_language))
         return
-
-    new_time = message.text
+    new_time_str = message.text
+    new_time = tuple(map(int, new_time_str.split()))
     if times := await state.get_value("time_notifications"):
-        if times[-1]['time'] >= new_time:
+        if tuple(map(int, times[-1]['time'].split())) >= new_time:
             await message.answer(get_text("notifications_time_increase_error", user_language))
             return
-        times.append({"time": new_time})
+        times.append({"time": new_time_str})
     else:
-        times = [{"time": new_time}]
+        times = [{"time": new_time_str}]
 
     await state.update_data(time_notifications=times)
 
