@@ -54,7 +54,7 @@ async def schedule_notifications(bot: Bot,
                                  data: list[dict]) -> list[str]:
     outdated_notifications = []
     for notification_data in data:
-        end_date_obj = datetime.datetime.strptime(notification_data['end_date'], "%d.%m.%Y")
+        end_date_obj = datetime.datetime.strptime(notification_data['end_date'], "%d.%m.%Y").replace(tzinfo=MSK)
         if end_date_obj < datetime.datetime.now(MSK):
             outdated_notifications.append(notification_data['id'])
             continue
