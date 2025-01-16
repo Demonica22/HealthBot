@@ -87,6 +87,7 @@ localization = {
                                  ("Все время", -1)],
 
     # Уведомления
+    "notifications_main_menu_button": "Уведомления",
     "make_medicine_notification_button": "Добавить прием лекарств",
     "make_doctor_notification_button": "Добавить прием врача",
     "notifications_main_menu_message": "Выберите действие:",
@@ -105,8 +106,8 @@ localization = {
     "notifications_time_increase_error": "Приемы нужно вводить по возрастанию, то есть "
                                          "каждый следующий прием должен быть позже предыдущего!",
     "notifications_add_successful_message": "Уведомление о приеме лекарства {medicine_name}\n"
-                                            "длительностью {duration},\n"
                                             "в {times}\n"
+                                            "до {duration},\n"
                                             "успешно добавлено!",
     "notifications_get_all_button": "Посмотреть свои уведомления",
     "notifications_medicine_name_label": "Название лекарства",

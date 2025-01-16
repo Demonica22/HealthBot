@@ -87,6 +87,8 @@ localization = {
                                  ("6 months", 6),
                                  ("1 year", 12),
                                  ("All Time", -1)],
+
+    "notifications_main_menu_button": "Notifications",
     "make_medicine_notification_button": "Add medicine intake",
     "make_doctor_notification_button": "Add doctor appointment",
     "notifications_main_menu_message": "Choose an action:",
@@ -105,8 +107,8 @@ localization = {
     "notifications_time_increase_error": "Intakes must be entered in ascending order, meaning "
                                          "each subsequent intake should be later than the previous one!",
     "notifications_add_successful_message": "Notification for medicine intake {medicine_name}\n"
-                                            "for {duration},\n"
                                             "at {times}\n"
+                                            "until {duration},\n"
                                             "successfully added!",
     "notifications_get_all_button": "View your notifications",
     "notifications_medicine_name_label": "Medicine name",
