@@ -21,7 +21,7 @@ from src.constants import DEFAULT_NOTIFICATIONS_DURATION_ROW_SIZE, DEFAULT_NOTIF
 from src.utils.keyboards import generate_reply_keyboard
 from src.utils.regex import TIME_REGEX
 from src.utils.message_formatters import generate_notifications_message
-
+from src.utils.timezone import MSK
 notification_router = Router()
 
 
@@ -55,7 +55,7 @@ async def schedule_notifications(bot: Bot,
     outdated_notifications = []
     for notification_data in data:
         end_date_obj = datetime.datetime.strptime(notification_data['end_date'], "%d.%m.%Y")
-        if end_date_obj < datetime.datetime.now():
+        if end_date_obj < datetime.datetime.now(MSK):
             outdated_notifications.append(notification_data['id'])
             continue
         user_language: str = (await get_user_by_id(notification_data['user_id']))['language']
@@ -263,7 +263,7 @@ async def choose_notification_times(message: Message, state: FSMContext):
         inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
         data['user_id'] = message.chat.id
         data.pop('times_a_day')
-        data["end_date"] = (datetime.datetime.now() + datetime.timedelta(days=data.pop("duration"))).strftime(
+        data["end_date"] = (datetime.datetime.now(MSK) + datetime.timedelta(days=data.pop("duration"))).strftime(
             "%d.%m.%Y")
         try:
             logging.info(f"Добавлено уведомление {data}")

@@ -7,6 +7,7 @@ from os import getenv
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from src.api.schemas import DiseaseSchema
+from src.utils.timezone import MSK
 
 load_dotenv()
 API_HOST = getenv("API_HOST")
@@ -66,7 +67,7 @@ async def get_user_diseases(user_id: int,
     if period_for_load == -1:
         start_date = -1
     else:
-        start_date = (datetime.now() - timedelta(days=30 * period_for_load)).strftime("%d.%m.%Y")
+        start_date = (datetime.now(MSK) - timedelta(days=30 * period_for_load)).strftime("%d.%m.%Y")
 
     async with aiohttp.ClientSession() as session:
         async with session.get(DISEASES_URL_FOR_USER + f"{user_id}", params={'start_date': start_date}) as response:
@@ -85,7 +86,7 @@ async def get_user_diseases_url(user_id: int,
     if period_for_load == -1:
         start_date = -1
     else:
-        start_date = (datetime.now() - timedelta(days=30 * period_for_load)).strftime("%d.%m.%Y")
+        start_date = (datetime.now(MSK) - timedelta(days=30 * period_for_load)).strftime("%d.%m.%Y")
     return USER_DISEASES_SERVER_URL + f"{user_id}" + "?" + urlencode({'start_date': start_date,
                                                                       'response_format': response_format,
                                                                       'user_language': user_language
