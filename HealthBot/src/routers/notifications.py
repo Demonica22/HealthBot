@@ -84,9 +84,9 @@ async def notification_menu(callback: CallbackQuery):
         [InlineKeyboardButton(
             text=get_text("make_medicine_notification_button", user_language),
             callback_data="make_medicine_notification")],
-        [InlineKeyboardButton(
-            text=get_text("make_doctor_notification_button", user_language),
-            callback_data="make_doctor_notification")],
+        # [InlineKeyboardButton(
+        #     text=get_text("make_doctor_notification_button", user_language),
+        #     callback_data="make_doctor_notification")],
         [InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
                               callback_data="to_main_menu")]
     ]

@@ -113,7 +113,7 @@ localization = {
     "notifications_end_date_label": "Уведомлять до",
     "notifications_in_label": "В ",
     "notifications_delete_button": "Удалить уведомления",
-    "notifications_message": "Вам нужно принять лекарство: {}",
+    "notifications_message": "Вы просили напомнить о приеме лекарства: {}",
     "notifications_choose_to_delete": "Выберите какое уведомление вы хотите удалить:\n",
     "notification_deleted_message": "Уведомление успешно удалено!",
     "notifications_empty_list":"У вас пока нет уведомлений",
