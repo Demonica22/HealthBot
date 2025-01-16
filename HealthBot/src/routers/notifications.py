@@ -240,9 +240,9 @@ async def choose_notification_times(message: Message, state: FSMContext):
         await message.answer(get_text("notifications_time_format_error", user_language))
         return
     new_time_str = message.text
-    new_time = tuple(map(int, new_time_str.split()))
+    new_time = tuple(map(int, new_time_str.split(":")))
     if times := await state.get_value("time_notifications"):
-        if tuple(map(int, times[-1]['time'].split())) >= new_time:
+        if tuple(map(int, times[-1]['time'].split(":"))) >= new_time:
             await message.answer(get_text("notifications_time_increase_error", user_language))
             return
         times.append({"time": new_time_str})
