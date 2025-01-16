@@ -109,6 +109,12 @@ async def disease_add_end(user_language,
         [InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
                               callback_data="to_main_menu")]
     ])
+    data = await state.get_data()
+
+    try:
+        await add_disease(data)
+    except Exception as x:
+        await message.answer(text=get_text("unexpected_error", user_language).format(x), reply_markup=inline_keyboard)
     if edit:
         try:
             await message.edit_text(text=get_text("disease_add_success_message", lang=user_language),
@@ -119,12 +125,8 @@ async def disease_add_end(user_language,
     else:
         await message.answer(text=get_text("disease_add_success_message", lang=user_language),
                              reply_markup=inline_keyboard)
-    data = await state.get_data()
     data['user_id'] = message.chat.id
-    try:
-        await add_disease(data)
-    except Exception as x:
-        await message.answer(text=get_text("unexpected_error", user_language).format(x), reply_markup=inline_keyboard)
+
     await state.clear()
 
 
