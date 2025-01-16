@@ -25,7 +25,7 @@ async def send_main_menu(message: Message, edit: bool = False):
             text=get_text("get_diseases_button", user_language),
             callback_data="get_diseases")],
         [InlineKeyboardButton(
-            text="Уведомления",
+            text=get_text("notifications_main_menu_button", user_language),
             callback_data="make_notification")],
         [InlineKeyboardButton(
             text=get_text("check_personal_data_button", user_language),
@@ -42,7 +42,7 @@ async def send_main_menu(message: Message, edit: bool = False):
 
 @main_router.callback_query(F.data == "to_main_menu")
 async def to_main_menu(callback: CallbackQuery, state: FSMContext):
-    await state.clear() # FIXME: надо ли? не ломает ли?
+    await state.clear()  # FIXME: надо ли? не ломает ли?
     await send_main_menu(callback.message, edit=True)
 
 
