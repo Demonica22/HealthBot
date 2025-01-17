@@ -5,6 +5,7 @@ from aiogram import Router, F
 
 from src.states.user_registration import UserRegistration
 from src.states.user_change_data import UserChangeData
+from src.constants import MAX_HEIGHT_AND_WEIGHT
 from src.api.handlers import add_user, get_user_by_id, update_user, get_user_active_diseases
 from src.localizations import get_text, AVAILABLE_LANGS, DEFAULT_LANG
 from .main_menu import send_main_menu
@@ -46,6 +47,10 @@ async def weight_chosen(message: Message, state: FSMContext):
     if not message.text.isdigit():
         await message.answer(text=get_text("weight_error_message", lang=user_language))
         return
+    elif int(message.text) > MAX_HEIGHT_AND_WEIGHT:
+        await message.answer(text=get_text("weight_overflow_error_message",
+                                           lang=user_language).format(MAX_HEIGHT_AND_WEIGHT))
+        return
     await state.update_data(weight=int(message.text))
     await message.answer(text=get_text("height_message", lang=user_language))
     await state.set_state(UserRegistration.height)
@@ -56,6 +61,10 @@ async def height_chosen(message: Message, state: FSMContext):
     user_language: str = (await state.get_data())['language']
     if not message.text.isdigit():
         await message.answer(text=get_text("height_error_message", lang=user_language))
+        return
+    elif int(message.text) > MAX_HEIGHT_AND_WEIGHT:
+        await message.answer(text=get_text("height_overflow_error_message", lang=user_language).format(
+            MAX_HEIGHT_AND_WEIGHT))
         return
     await state.update_data(height=int(message.text))
     await message.answer(
@@ -72,7 +81,7 @@ async def change_info(callback: CallbackQuery, state: FSMContext):
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
 
     buttons: list[list[InlineKeyboardButton]] = []
-    fields = ['name', 'gender', 'weight', 'height', 'language']  # FIXME:
+    fields = ['name', 'gender', 'language', 'weight', 'height']  # FIXME:
     for field in fields:
         buttons.append(
             [InlineKeyboardButton(text=get_text(field + "_field", user_language),
@@ -110,19 +119,87 @@ async def get_info(callback: CallbackQuery):
 
 @user_router.callback_query(UserChangeData.field_name)
 async def change_piece(callback: CallbackQuery, state: FSMContext):
-    await state.update_data(field_name=callback.data.split('_')[0])
-    user_lang = (await get_user_by_id(callback.message.chat.id))['language']
-    await callback.message.edit_text(
-        text=get_text("enter_new_data_for_change_message", lang=user_lang).format(
-            get_text(callback.data, lang=user_lang))
-    )
+    field_name = callback.data.split('_')[0]
+    await state.update_data(field_name=field_name)
+    user_language = (await get_user_by_id(callback.message.chat.id))['language']
+    if field_name == "gender":
+        genders: list = get_text("gender_list", user_language)
+        buttons: list[list[InlineKeyboardButton]] = [[InlineKeyboardButton(text=gender, callback_data=gender)] for
+                                                     gender in
+                                                     genders]
+
+        inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+        await callback.message.edit_text(text=get_text("gender_message", lang=user_language),
+                                         reply_markup=inline_keyboard)
+    elif field_name == "language":
+        inline_keyboard = [[]]
+        for callback_, text in AVAILABLE_LANGS.items():
+            inline_keyboard.append([InlineKeyboardButton(text=text, callback_data=callback_)])
+        await callback.message.answer(text=get_text('language_message', user_language),
+                                      reply_markup=InlineKeyboardMarkup(inline_keyboard=inline_keyboard))
+    else:
+        await callback.message.edit_text(
+            text=get_text("enter_new_data_for_change_message", lang=user_language).format(
+                get_text(callback.data, lang=user_language))
+        )
     await state.set_state(UserChangeData.new_data)
 
 
+@user_router.callback_query(UserChangeData.new_data)
+async def change_data_callback_handler(callback: CallbackQuery, state: FSMContext):
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+    await state.update_data(new_data=callback.data)
+    data: dict = await state.get_data()
+    try:
+        await update_user(callback.message.chat.id, data['field_name'], data['new_data'])
+    except Exception as x:
+        await callback.message.edit_text(text=get_text("unexpected_error", user_language).format(x))
+        return
+
+    await state.clear()
+
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+
+    buttons: list[list[InlineKeyboardButton]] = [
+        [InlineKeyboardButton(text=get_text("back_button", user_language),
+                              callback_data="back_check_info")],
+        [InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
+                              callback_data="to_main_menu")]
+    ]
+
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    await callback.message.edit_text(text=get_text("user_change_data_success_message", user_language),
+                                     reply_markup=inline_keyboard)
+
+
 @user_router.message(UserChangeData.new_data)
-async def change_data(message: Message, state: FSMContext):
+async def change_data_message_handler(message: Message, state: FSMContext):
     user_language: str = (await get_user_by_id(message.chat.id))['language']
-    await state.update_data(new_data=message.text)
+    field_name = await state.get_value('field_name')
+    message_text = message.text
+    if field_name in ("gender", "language"):
+        await message.answer("")
+        return
+    elif field_name == "weight":
+        if not message_text.isdigit():
+            await message.answer(text=get_text("weight_error_message", lang=user_language))
+            return
+        elif int(message_text) > MAX_HEIGHT_AND_WEIGHT:
+            await message.answer(
+                text=get_text("weight_overflow_error_message", lang=user_language).format(MAX_HEIGHT_AND_WEIGHT))
+            return
+        message_text = int(message_text)
+    elif field_name == "height":
+        if not message_text.isdigit():
+            await message.answer(text=get_text("height_error_message", lang=user_language))
+            return
+        elif int(message_text) > MAX_HEIGHT_AND_WEIGHT:
+            await message.answer(
+                text=get_text("height_overflow_error_message", lang=user_language).format(MAX_HEIGHT_AND_WEIGHT))
+            return
+        message_text = int(message_text)
+
+    await state.update_data(new_data=message_text)
     data: dict = await state.get_data()
     try:
         await update_user(message.chat.id, data['field_name'], data['new_data'])
@@ -131,8 +208,6 @@ async def change_data(message: Message, state: FSMContext):
         return
 
     await state.clear()
-
-    user_language: str = (await get_user_by_id(message.chat.id))['language']
 
     buttons: list[list[InlineKeyboardButton]] = [
         [InlineKeyboardButton(text=get_text("back_button", user_language),

@@ -10,10 +10,12 @@ localization = {
     "gender_list": ["Мужчина", "Женщина"],
     "weight_message": "Введите ваш вес:",
     "weight_error_message": "Укажите вес в формате числа!",
+    "weight_overflow_error_message": "Вес должен быть меньше чем: {}!",
     "height_message": "Введите ваш рост в сантиметрах (пр. 160):",
     "height_error_message": "Укажите рост в формате числа!",
+    "height_overflow_error_message": "Рост должен быть меньше чем: {}!",
     "register_complete_message": "Регистрация завершена!",
-
+    "only_button_input_allowed_message": "Для выбранного поля поддерживается только выбор кнопкой",
     # Персональные данные
     "change_data_message": "Изменить свои данные",
     "name_field": "Имя",
@@ -117,7 +119,7 @@ localization = {
     "notifications_message": "Вы просили напомнить о приеме лекарства: {}",
     "notifications_choose_to_delete": "Выберите какое уведомление вы хотите удалить:\n",
     "notification_deleted_message": "Уведомление успешно удалено!",
-    "notifications_empty_list":"У вас пока нет уведомлений",
+    "notifications_empty_list": "У вас пока нет уведомлений",
     "day_word": "день",
     "what_is_next": "Что делаем дальше?",
 

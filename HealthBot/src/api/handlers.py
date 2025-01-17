@@ -49,7 +49,8 @@ async def update_user(user_id: int,
                                  }) as response:
             data = await response.json()
             if not data['success']:
-                raise Exception("Ошибка обновления данных пользователя")
+                logging.debug(f"Ошибка обновления данных пользователя : {data['message']}")
+                raise Exception(f"Ошибка обновления данных пользователя")
             response.raise_for_status()
             logging.debug(f"Updated {user_id}, set {field} = {new_data}")
 

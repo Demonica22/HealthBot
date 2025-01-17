@@ -11,9 +11,12 @@ localization = {
     "gender_list": ["Male", "Female"],
     "weight_message": "Enter your weight:",
     "weight_error_message": "Specify the weight in number format!",
+    "weight_overflow_error_message": "The weight should be lower than: {}!",
     "height_message": "Enter your height in centimeters (e.g., 160):",
     "height_error_message": "Specify the height in number format!",
+    "height_overflow_error_message": "The height should be lower than: {}!",
     "register_complete_message": "Registration complete!",
+    "only_button_input_allowed_message": "You should use button to input new value for the selected field!",
 
     # Personal Data
     "change_data_message": "Edit your information",
