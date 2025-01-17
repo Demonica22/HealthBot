@@ -58,6 +58,7 @@ async def add_disease(disease_data: dict) -> list[dict]:
     async with aiohttp.ClientSession() as session:
         logging.debug(f"Disease add: {disease_data}")
         async with session.post(DISEASES_URL, json=disease_data) as response:
+            logging.debug(await response.json())
             response.raise_for_status()
             return await response.json()
 
