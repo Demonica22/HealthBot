@@ -56,7 +56,7 @@ localization = {
     "disease_still_sick_message": "Are you still sick?",
     "disease_add_success_message": "Disease successfully added!",
     "disease_choose_inline_tip": "Enter your disease or select from the list",
-    "default_diseases_list": ["ARVI", "Flu", "Allergy", "Fracture", "Сardiovascular diseases"],
+    "default_diseases_list": ["SARS", "Flu", "Allergy", "Fracture", "Сardiovascular diseases"],
 
     "disease_date_choose_inline_tip": "Enter the date or select from the list",
     "disease_today_date_word": "Today",
