@@ -56,7 +56,7 @@ localization = {
     "disease_still_sick_message": "Are you still sick?",
     "disease_add_success_message": "Disease successfully added!",
     "disease_choose_inline_tip": "Enter your disease or select from the list",
-    "default_diseases_list": ["ARVI", "Flu", "Allergy", "Fracture", "Сardiovascular diseases"],
+    "default_diseases_list": ["SARS", "Flu", "Allergy", "Fracture", "Сardiovascular diseases"],
 
     "disease_date_choose_inline_tip": "Enter the date or select from the list",
     "disease_today_date_word": "Today",
@@ -87,6 +87,38 @@ localization = {
                                  ("6 months", 6),
                                  ("1 year", 12),
                                  ("All Time", -1)],
+
+    "notifications_main_menu_button": "Notifications",
+    "make_medicine_notification_button": "Add medicine intake",
+    "make_doctor_notification_button": "Add doctor appointment",
+    "notifications_main_menu_message": "Choose an action:",
+    "notifications_chose_medicine_message": "Enter the name of the medicine to take:",
+    "notifications_duration_inline_tip": "Choose from the suggested list or enter the number of days:\n",
+    "notifications_duration_message": "How many days do you need to take the medicine?\n",
+    "notifications_default_duration_list": ["3", "5", "7", "10", "14"],
+    "notifications_duration_type_error": "Please enter the duration of medicine intake as a number!",
+    "notifications_times_a_day_list": ["1", "2", "3", "4"],
+    "notifications_times_a_day_inline_tip": "Choose from the suggested list or enter the number:\n",
+    "notifications_times_a_day_message": "Choose how many times a day you need to take the medicine:\n",
+    "notifications_times_a_day_type_error": "Please enter the number of doses per day as a number!",
+
+    "notifications_choose_time_message": "Enter the time for intake №{}:",
+    "notifications_time_format_error": "Time should be entered in the format HH:MM!",
+    "notifications_time_increase_error": "Intakes must be entered in ascending order, meaning "
+                                         "each subsequent intake should be later than the previous one!",
+    "notifications_add_successful_message": "Notification for medicine intake {medicine_name}\n"
+                                            "at {times}\n"
+                                            "until {duration},\n"
+                                            "successfully added!",
+    "notifications_get_all_button": "View your notifications",
+    "notifications_medicine_name_label": "Medicine name",
+    "notifications_end_date_label": "Notify until",
+    "notifications_in_label": "In ",
+    "notifications_delete_button": "Delete notifications",
+    "notifications_message": "You need to take the medicine: {}",
+    "notifications_choose_to_delete": "Choose which notification you want to delete:\n",
+    "notification_deleted_message": "Notification successfully deleted!",
+    "notifications_empty_list": "You don't have any notifications yet",
 
     "day_word": "days",
     "what_is_next": "What is next?",

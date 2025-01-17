@@ -12,5 +12,5 @@ async def remove_chat_buttons(message,
     if msg_text is None:
         msg_text = get_text("system_clear_keyboard", user_language)
     msg = await message.answer(msg_text,
-                               reply_markup=ReplyKeyboardRemove())
+                               reply_markup=ReplyKeyboardRemove(input_field_placeholder=None))
     await msg.delete()

@@ -6,9 +6,11 @@ from sqlalchemy import pool
 from alembic import context
 
 from src.database.session import DATABASE_URL
-from src.users.models import User # noqa
-from src.diseases.models import Disease # noqa
 from src.database.models import Base
+
+from src.users.models import User  # noqa
+from src.diseases.models import Disease  # noqa
+from src.notifications.models import Notification, NotificationTime  # noqa
 
 config = context.config
 

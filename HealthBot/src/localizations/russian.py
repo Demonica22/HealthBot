@@ -86,6 +86,38 @@ localization = {
                                  ("Год", 12),
                                  ("Все время", -1)],
 
+    # Уведомления
+    "notifications_main_menu_button": "Уведомления",
+    "make_medicine_notification_button": "Добавить прием лекарств",
+    "make_doctor_notification_button": "Добавить прием врача",
+    "notifications_main_menu_message": "Выберите действие:",
+    "notifications_chose_medicine_message": "Введите название лекарства для приема:",
+    "notifications_duration_inline_tip": "Выберите из предложенного списка или введите число дней:\n",
+    "notifications_duration_message": "Сколько дней вам нужно принимать лекарства?\n",
+    "notifications_default_duration_list": ["3", "5", "7", "10", "14"],
+    "notifications_duration_type_error": "Введите длительность приема лекарств числом!",
+    "notifications_times_a_day_list": ["1", "2", "3", "4"],
+    "notifications_times_a_day_inline_tip": "Выберите из предложенного списка или введите число:\n",
+    "notifications_times_a_day_message": "Выберите сколько раз в день вам нужно принимать лекарства:",
+    "notifications_times_a_day_type_error": "Введите количество приемов в день числом!",
+
+    "notifications_choose_time_message": "Введите время для приема №{}:",
+    "notifications_time_format_error": "Время следует вводить в формате ЧЧ:ММ!",
+    "notifications_time_increase_error": "Приемы нужно вводить по возрастанию, то есть "
+                                         "каждый следующий прием должен быть позже предыдущего!",
+    "notifications_add_successful_message": "Уведомление о приеме лекарства {medicine_name}\n"
+                                            "в {times}\n"
+                                            "до {duration},\n"
+                                            "успешно добавлено!",
+    "notifications_get_all_button": "Посмотреть свои уведомления",
+    "notifications_medicine_name_label": "Название лекарства",
+    "notifications_end_date_label": "Уведомлять до",
+    "notifications_in_label": "В ",
+    "notifications_delete_button": "Удалить уведомления",
+    "notifications_message": "Вы просили напомнить о приеме лекарства: {}",
+    "notifications_choose_to_delete": "Выберите какое уведомление вы хотите удалить:\n",
+    "notification_deleted_message": "Уведомление успешно удалено!",
+    "notifications_empty_list":"У вас пока нет уведомлений",
     "day_word": "день",
     "what_is_next": "Что делаем дальше?",
 
