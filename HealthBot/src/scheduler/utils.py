@@ -86,6 +86,7 @@ async def notification_cleanup():
 async def schedule_notification_cleanup():
     # тут 8 магическое число - наиболее странная минута для уведомлений
     # чтобы очистка уведомлений не задевала пользователей
+    minute_to_delete_notifications = 8
     scheduler.add_job(
         func=notification_cleanup,
-        trigger=CronTrigger(minute=8))
+        trigger=CronTrigger(minute=minute_to_delete_notifications))
