@@ -11,9 +11,6 @@ from aiogram.types import (
 )
 from aiogram.fsm.context import FSMContext
 
-from apscheduler.triggers.cron import CronTrigger
-
-from src.scheduler.main import scheduler
 from src.localizations import get_text
 from src.api.handlers import get_user_by_id, add_notification, get_user_notifications, delete_notification
 from src.states.notification_medicine_add import MedicineNotificationAdd
@@ -22,55 +19,9 @@ from src.utils.keyboards import generate_reply_keyboard
 from src.utils.regex import TIME_REGEX
 from src.utils.message_formatters import generate_notifications_message
 from src.utils.timezone import MSK
+from src.scheduler.utils import schedule_notifications
 
 notification_router = Router()
-
-
-async def send_notification(bot: Bot,
-                            user_id: int,
-                            message_text='test_message'):
-    await bot.send_message(chat_id=user_id, text=message_text)
-
-
-async def schedule_notification(bot: Bot,
-                                user_id: int,
-                                user_language: str,
-                                end_date: datetime.datetime,
-                                time: tuple[int],
-                                medicine_name: str = None):
-    message_text = get_text("notifications_message", user_language).format(medicine_name)
-    logging.debug(f'Scheduled notification at {time} for {user_id}, end_date = {end_date}, with text = {message_text}')
-    scheduler.add_job(
-        func=send_notification,
-        kwargs={
-            "bot": bot,
-            "user_id": user_id,
-            "message_text": message_text
-        },
-        trigger=CronTrigger(hour=time[0], minute=time[1], end_date=end_date)
-    )
-
-
-async def schedule_notifications(bot: Bot,
-                                 data: list[dict]) -> list[str]:
-    outdated_notifications = []
-    for notification_data in data:
-        end_date_obj = datetime.datetime.strptime(notification_data['end_date'], "%d.%m.%Y").replace(tzinfo=MSK)
-        if end_date_obj < datetime.datetime.now(MSK):
-            outdated_notifications.append(notification_data['id'])
-            continue
-        user_language: str = (await get_user_by_id(notification_data['user_id']))['language']
-
-        for time_data in notification_data['time_notifications']:
-            time = tuple(map(int, time_data['time'].split(":")))
-            await schedule_notification(bot,
-                                        user_id=notification_data['user_id'],
-                                        user_language=user_language,
-                                        end_date=end_date_obj,
-                                        time=time,
-                                        medicine_name=notification_data['medicine_name'])
-
-    return outdated_notifications
 
 
 @notification_router.callback_query(F.data == "make_notification")
