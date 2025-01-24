@@ -8,8 +8,8 @@ from aiogram.enums import ParseMode
 
 from src.routers import routers
 from src.lifespan import on_startup, on_shutdown
-from src.custom_logging import LoggingMiddleware
-
+from src.middleware.logging import LoggingMiddleware
+from src.middleware.auth import AuthMiddleware
 
 async def main():
     bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
@@ -18,7 +18,7 @@ async def main():
     dp.startup.register(on_startup)
     dp.shutdown.register(on_shutdown)
     dp.message.middleware(LoggingMiddleware())
-
+    dp.message.middleware(AuthMiddleware())
     for router in routers:
         dp.include_router(router)
 

@@ -8,7 +8,7 @@ from src.states.user_change_data import UserChangeData
 from src.constants import MAX_HEIGHT_AND_WEIGHT
 from src.api.handlers import add_user, get_user_by_id, update_user, get_user_active_diseases
 from src.localizations import get_text, AVAILABLE_LANGS, DEFAULT_LANG
-from .main_menu import send_main_menu
+from src.routers.main_menu import send_main_menu
 
 user_router = Router()
 
