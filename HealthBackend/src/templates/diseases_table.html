@@ -24,13 +24,25 @@
           border-collapse: collapse;
           margin: 2%;
         }
-        th {
+        th, h1 {
           border-bottom: 1px solid #364043;
           color: #E2B842;
           font-size: 0.85em;
           font-weight: 600;
           padding: 0.5em 1em;
           text-align: left;
+        }
+        div {
+            margin: 2%;
+        }
+        h1 {
+          font-size: 1.25em;
+        }
+        h3 {
+            color: #E2B842;
+        }
+        p {
+            color: #fff;
         }
         td {
           color: #fff;
@@ -51,7 +63,15 @@
     </style>
 </head>
 <body>
-<!--<h1>{{table_name}}</h1>-->
+<h1>{{table_name}}</h1>
+<div >
+    <h3>{{your_info}}</h3>
+    <p><strong>{{name}}:</strong> {{user.name}}</p>
+    <p><strong>{{gender}}:</strong> {{user.gender}}</p>
+    <p><strong>{{weight}}:</strong> {{user.weight}}</p>
+    <p><strong>{{height}}:</strong> {{user.height}}</p>
+
+</div>
 <table>
     <thead>
     <tr>

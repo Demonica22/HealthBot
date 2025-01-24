@@ -7,6 +7,8 @@ from src.database.session import SessionDep
 from src.diseases.models import Disease
 from src.diseases.schemas import DiseaseSchemaAdd, DiseaseSchema
 from src.diseases.enums import DiseasesResponseFormat, UserLanguage
+from src.users.models import User
+from src.users.schemas import UserSchema
 from src.utils.constants import STRING_DATE_FORMAT
 from src.utils.make_diseases_document import make_in_memory_document
 from src.utils.generate_html_page import get_diseases_template
@@ -57,14 +59,15 @@ async def get_all_user_diseases(user_id: int,
     result = await session.execute(query)
 
     diseases = [DiseaseSchema.from_orm(disease).model_dump() for disease in result.scalars().all()]
-
+    user_query = select(User).where(User.id == user_id)
+    user_data = UserSchema.from_orm((await session.execute(user_query)).scalars().first()).model_dump()
     if response_format == "json":
         return diseases
     elif response_format == "docx":
         return StreamingResponse(content=make_in_memory_document(diseases, user_language),
                                  headers={'Content-Disposition': 'attachment; filename="diseases.docx"'})
     elif response_format == "html":
-        return await get_diseases_template(diseases, user_language, request)
+        return await get_diseases_template(diseases, user_data, user_language, request)
 
 
 @router.patch("/mark_as_finished/{disease_id}")

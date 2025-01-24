@@ -11,6 +11,11 @@ constraints = {
 
         "no": "Нет",
         "yes": "Да",
+        "your_info": "Данные о пациенте",
+        "name": "Имя",
+        "gender": "Пол",
+        "weight": "Вес",
+        "height": "Рост",
     },
     "en": {
         "table_title": "Illness Table",
@@ -24,5 +29,10 @@ constraints = {
 
         "no": "No",
         "yes": "Yes",
+        "your_info": "Patient Information",
+        "name": "Name",
+        "gender": "Gender",
+        "weight": "Weight",
+        "height": "Height",
     }
 }

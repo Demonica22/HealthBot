@@ -1,5 +1,4 @@
-from pydantic import BaseModel
-
+from pydantic import BaseModel, ConfigDict
 
 class UserSchema(BaseModel):
     id: int
@@ -8,6 +7,9 @@ class UserSchema(BaseModel):
     language: str
     weight: int
     height: int
+
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserPatchSchema(BaseModel):
