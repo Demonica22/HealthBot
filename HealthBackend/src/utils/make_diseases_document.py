@@ -3,8 +3,21 @@ from io import BytesIO
 from src.utils.localization import constraints
 
 
-def make_in_memory_document(diseases: list[dict], user_language: str):
+def make_in_memory_document(diseases: list[dict],
+                            user_info: dict,
+                            user_language: str):
     doc = docx.Document()
+    patient_paragraph = doc.add_paragraph()
+    patient_paragraph.add_run(f"{constraints[user_language]['your_info']}:\n").bold = True
+    patient_paragraph.add_run(f"{constraints[user_language]['name']}: ").bold = True
+    patient_paragraph.add_run(f"{user_info['name']}\n")
+    patient_paragraph.add_run(f"{constraints[user_language]['gender']}: ").bold = True
+    patient_paragraph.add_run(f"{user_info['gender']}\n")
+    patient_paragraph.add_run(f"{constraints[user_language]['weight']}: ").bold = True
+    patient_paragraph.add_run(f"{user_info['weight']}\n")
+    patient_paragraph.add_run(f"{constraints[user_language]['height']}: ").bold = True
+    patient_paragraph.add_run(f"{user_info['height']}\n")
+
     doc.add_heading(constraints[user_language]['table_title'], level=1)
     headers = [constraints[user_language]['title'],
                constraints[user_language]['description'],

@@ -64,7 +64,7 @@ async def get_all_user_diseases(user_id: int,
     if response_format == "json":
         return diseases
     elif response_format == "docx":
-        return StreamingResponse(content=make_in_memory_document(diseases, user_language),
+        return StreamingResponse(content=make_in_memory_document(diseases, user_data, user_language),
                                  headers={'Content-Disposition': 'attachment; filename="diseases.docx"'})
     elif response_format == "html":
         return await get_diseases_template(diseases, user_data, user_language, request)
