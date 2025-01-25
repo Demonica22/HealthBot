@@ -178,7 +178,7 @@ async def change_data_message_handler(message: Message, state: FSMContext):
     field_name = await state.get_value('field_name')
     message_text = message.text
     if field_name in ("gender", "language"):
-        await message.answer("")
+        await message.answer(text=get_text("only_button_input_allowed_message", lang=user_language))
         return
     elif field_name == "weight":
         if not message_text.isdigit():
