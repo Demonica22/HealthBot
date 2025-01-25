@@ -18,3 +18,4 @@ class UserPatchSchema(BaseModel):
     language: str | None = None
     weight: int | None = None
     height: int | None = None
+    doctor_id: int | None = None

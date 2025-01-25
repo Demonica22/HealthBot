@@ -124,7 +124,15 @@ localization = {
     "what_is_next": "Что делаем дальше?",
 
     # Doctors
-    "doctor_get_patients": "Список ваших пациентов",
-    "doctor_get_free_patients": "Список свободных пациентов",
-    "doctor_menu": "Меню доктора:"
+    "doctor_get_patients_button": "Список ваших пациентов",
+    "doctor_get_free_patients_button": "Список свободных пациентов",
+    "doctor_menu_button": "В меню доктора",
+    "doctor_menu": "Меню доктора:",
+    "users_free_empty_list_message": "Свободных пациентов не найдено.",
+    "users_mine_empty_list_message": "У вас пока нет пациентов",
+    "current_diseases": "Текущие болезни",
+    "user_is_healthy": "Здоров(-а)",
+    "doctor_choose_patient_button": "Выбрать пациента",
+    "patient_choose_success_message": "Пациент {} взят вами",
+
 }

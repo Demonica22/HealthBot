@@ -1,5 +1,6 @@
 from fastapi import APIRouter, status
 from sqlalchemy import select, update
+from sqlalchemy.orm import selectinload
 
 from src.database.session import SessionDep
 from src.users.models import User
@@ -35,8 +36,12 @@ async def add_user(data: UserSchema, session: SessionDep):
 
 
 @router.get("/free")
-async def get_free_users(session: SessionDep):
+async def get_free_users(session: SessionDep,
+                         with_diseases: bool = False):
     query = select(User).where(User.doctor_id == None)
+    if with_diseases:
+        query = query.options(
+            selectinload(User.diseases))
     result = await session.execute(query)
     users = result.scalars().all()
     return users
@@ -68,9 +73,13 @@ async def update_user(user_id: int,
 
 @router.get("/by_doctor/{doctor_id}")
 async def get_doctors_users(doctor_id: int,
-                            session: SessionDep
+                            session: SessionDep,
+                         with_diseases: bool = False
                             ):
     query = select(User).where(User.doctor_id == doctor_id)
+    if with_diseases:
+        query = query.options(
+            selectinload(User.diseases))
     result = await session.execute(query)
     users = result.scalars().all()
     return users

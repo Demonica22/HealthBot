@@ -161,7 +161,7 @@ async def get_all_notifications() -> list[dict]:
 
 async def get_free_users() -> list[dict]:
     async with aiohttp.ClientSession() as session:
-        async with session.get(FREE_USERS_URL) as response:
+        async with session.get(FREE_USERS_URL, params={"with_diseases": 1}) as response:
             response.raise_for_status()
             return await response.json()
 
@@ -175,6 +175,6 @@ async def get_all_doctors() -> list[int]:
 
 async def get_doctor_patients(doctor_id) -> list[dict]:
     async with aiohttp.ClientSession() as session:
-        async with session.get(BY_DOCTOR_USERS_URL + f"{doctor_id}") as response:
+        async with session.get(BY_DOCTOR_USERS_URL + f"{doctor_id}", params={"with_diseases": 1}) as response:
             response.raise_for_status()
             return await response.json()
