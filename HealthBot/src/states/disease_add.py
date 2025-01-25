@@ -8,3 +8,4 @@ class DiseaseAdd(StatesGroup):
     date_from = State()
     still_sick = State()
     date_to = State()
+    for_patient = State()

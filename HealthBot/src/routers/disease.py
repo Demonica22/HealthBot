@@ -110,7 +110,14 @@ async def disease_add_end(user_language,
                               callback_data="to_main_menu")]
     ])
     data = await state.get_data()
-    data['user_id'] = message.chat.id
+    if patient_id := data.get("for_patient"):
+        data['user_id'] = patient_id
+        inline_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text=get_text("doctor_menu_button", user_language),
+                                  callback_data="doctor_menu")]
+        ])
+    else:
+        data['user_id'] = message.chat.id
 
     try:
         await add_disease(data)

@@ -134,5 +134,10 @@ localization = {
     "user_is_healthy": "Здоров(-а)",
     "doctor_choose_patient_button": "Выбрать пациента",
     "patient_choose_success_message": "Пациент {} взят вами",
-
+    "choose_patient_message": "Выберите пациента:",
+    "patient_actions_message": "Выберите действие, которое хотите сделать:",
+    "add_disease_for_patient_button": "Добавить болезнь пациенту",
+    "add_appointment_for_patient_button": "Добавить запись к врачу #TODO",
+    "get_patient_medical_card_button": "Посмотреть карту пациента",
+    "get_patient_medical_card_message": "Вот карта вашего пациента:",
 }

@@ -7,7 +7,7 @@ from src.routers.user import get_info
 from src.routers.main_menu import to_main_menu
 from src.routers.disease import get_active_diseases
 from src.routers.notifications import get_all_notifications, notifications_delete, notification_menu
-from src.routers.doctor import get_free_patients
+from src.routers.doctor import get_free_patients, get_patients, choose_doctor_patient_handler
 
 back_router = Router()
 
@@ -23,6 +23,8 @@ async def get_back(callback: CallbackQuery, state: FSMContext):
         "notification_deleted": notifications_delete,
         "diseases_mark": get_active_diseases,
         "free_patients": get_free_patients,
+        "doctors_patients": get_patients,
+        "choose_doctors_patient": choose_doctor_patient_handler,
     }
     await state.clear()  # не добавлять back не на первую итерацию state
     if "state" in inspect.getfullargspec(back_dict[previous_position]).args:
