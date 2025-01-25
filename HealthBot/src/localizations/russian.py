@@ -127,7 +127,7 @@ localization = {
     "doctor_get_patients_button": "Список ваших пациентов",
     "doctor_get_free_patients_button": "Список свободных пациентов",
     "doctor_menu_button": "В меню доктора",
-    "doctor_menu": "Меню доктора:",
+    "doctor_menu": "Меню доктора",
     "users_free_empty_list_message": "Свободных пациентов не найдено.",
     "users_mine_empty_list_message": "У вас пока нет пациентов",
     "current_diseases": "Текущие болезни",

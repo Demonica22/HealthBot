@@ -63,15 +63,15 @@ async def get_patients(callback: CallbackQuery):
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
     patients = await get_doctor_patients(callback.message.chat.id)
 
-    buttons: list[list[InlineKeyboardButton]] = [
-        [InlineKeyboardButton(
+    buttons: list[list[InlineKeyboardButton]] = []
+    if not patients:
+        buttons.append([InlineKeyboardButton(
             text=get_text("doctor_get_free_patients_button", user_language),
-            callback_data="get_free_patients")],
-        [InlineKeyboardButton(
-            text=get_text("doctor_menu_button", user_language),
-            callback_data="doctor_menu")],
-    ]
+            callback_data="get_free_patients")])
 
+    buttons.append([InlineKeyboardButton(
+        text=get_text("doctor_menu_button", user_language),
+        callback_data="doctor_menu")])
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     await callback.message.edit_text(generate_users_message(patients, user_language, 'mine'),
                                      reply_markup=inline_keyboard)
