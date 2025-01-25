@@ -34,6 +34,14 @@ async def add_user(data: UserSchema, session: SessionDep):
     return new_user
 
 
+@router.get("/free")
+async def get_free_users(session: SessionDep):
+    query = select(User).where(User.doctor_id == None)
+    result = await session.execute(query)
+    users = result.scalars().all()
+    return users
+
+
 @router.get("/{user_id}")
 async def get_user(user_id: int, session: SessionDep):
     query = select(User).where(User.id == user_id)
@@ -56,3 +64,13 @@ async def update_user(user_id: int,
     else:
         await session.commit()
         return {"success": True}
+
+
+@router.get("/by_doctor/{doctor_id}")
+async def get_doctors_users(doctor_id: int,
+                            session: SessionDep
+                            ):
+    query = select(User).where(User.doctor_id == doctor_id)
+    result = await session.execute(query)
+    users = result.scalars().all()
+    return users

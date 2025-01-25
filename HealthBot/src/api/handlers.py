@@ -17,11 +17,16 @@ API_URL = f"http://{API_HOST}:{API_PORT}"
 USERS_URL = API_URL + "/users/"
 DISEASES_URL = API_URL + "/diseases/"
 DISEASES_URL_FOR_USER = DISEASES_URL + "for_user/"
+
 SERVER_URl = f"http://{SERVER_HOST}"
 USER_DISEASES_SERVER_URL = SERVER_URl + "/diseases/" + "for_user/"
 FINISH_DISEASE_URL = DISEASES_URL + "mark_as_finished/"
 NOTIFICATIONS_URL = API_URL + "/notifications/"
 NOTIFICATIONS_FOR_USER = NOTIFICATIONS_URL + "for_user/"
+
+FREE_USERS_URL = USERS_URL + "free"
+BY_DOCTOR_USERS_URL = USERS_URL + "by_doctor/"
+DOCTORS_URL = API_URL + "/doctor/"
 
 
 async def add_user(data: dict) -> bool:
@@ -150,5 +155,26 @@ async def delete_notification(notification_id: int) -> None:
 async def get_all_notifications() -> list[dict]:
     async with aiohttp.ClientSession() as session:
         async with session.get(NOTIFICATIONS_URL) as response:
+            response.raise_for_status()
+            return await response.json()
+
+
+async def get_free_users() -> list[dict]:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(FREE_USERS_URL) as response:
+            response.raise_for_status()
+            return await response.json()
+
+
+async def get_all_doctors() -> list[int]:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(DOCTORS_URL) as response:
+            response.raise_for_status()
+            return await response.json()
+
+
+async def get_doctor_patients(doctor_id) -> list[dict]:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(BY_DOCTOR_USERS_URL + f"{doctor_id}") as response:
             response.raise_for_status()
             return await response.json()

@@ -1,5 +1,7 @@
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import BigInteger
+
 from src.database.models import Base
 
 
@@ -14,3 +16,4 @@ class User(Base):
     language: Mapped[str]
     weight: Mapped[int]
     height: Mapped[int]
+    doctor_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), nullable=True)

@@ -123,4 +123,8 @@ localization = {
     "day_word": "день",
     "what_is_next": "Что делаем дальше?",
 
+    # Doctors
+    "doctor_get_patients": "Список ваших пациентов",
+    "doctor_get_free_patients": "Список свободных пациентов",
+    "doctor_menu": "Меню доктора:"
 }

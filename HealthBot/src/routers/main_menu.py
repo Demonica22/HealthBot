@@ -11,7 +11,6 @@ main_router = Router()
 
 
 async def send_main_menu(message: Message, edit: bool = False):
-    # TODO: check if user is none
     user_language: str = (await get_user_by_id(message.chat.id))['language']
 
     buttons: list[list[InlineKeyboardButton]] = [

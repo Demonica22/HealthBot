@@ -11,6 +11,7 @@ from src.database.models import Base
 from src.users.models import User  # noqa
 from src.diseases.models import Disease  # noqa
 from src.notifications.models import Notification, NotificationTime  # noqa
+from src.doctors.models import Doctor  # noqa
 
 config = context.config
 
