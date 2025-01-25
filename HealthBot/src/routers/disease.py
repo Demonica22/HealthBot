@@ -106,6 +106,9 @@ async def disease_add_end(user_language,
                           edit=False):
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=
     [
+        [InlineKeyboardButton(
+            text=get_text("make_medicine_notification_button", user_language),
+            callback_data="make_medicine_notification")],
         [InlineKeyboardButton(text=get_text("to_main_menu_button", user_language),
                               callback_data="to_main_menu")]
     ])
