@@ -55,7 +55,7 @@ localization = {
     "disease_treatment_plan_message": "If you have a treatment plan, write it:",
     "disease_date_start_message": "When did you get sick? (enter in the format 21.10.2024)",
     "disease_date_end_message": "When did you recover? (enter in the format 21.10.2024)",
-    "disease_incorrect_date": "You entered the date in an incorrect format, please enter in the format DD.MM.YYYY - 21.10.2024",
+    "incorrect_date_message": "You entered the date in an incorrect format, please enter in the format DD.MM.YYYY - 21.10.2024",
     "disease_still_sick_message": "Are you still sick?",
     "disease_add_success_message": "Disease successfully added!",
     "disease_choose_inline_tip": "Enter your disease or select from the list",
@@ -106,7 +106,7 @@ localization = {
     "notifications_times_a_day_type_error": "Please enter the number of doses per day as a number!",
 
     "notifications_choose_time_message": "Enter the time for intake №{}:",
-    "notifications_time_format_error": "Time should be entered in the format HH:MM!",
+    "time_format_error": "Time should be entered in the format HH:MM!",
     "notifications_time_increase_error": "Intakes must be entered in ascending order, meaning "
                                          "each subsequent intake should be later than the previous one!",
     "notifications_add_successful_message": "Notification for medicine intake {medicine_name}\n"

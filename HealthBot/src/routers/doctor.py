@@ -1,14 +1,17 @@
+import re
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, URLInputFile
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command, StateFilter
 from aiogram import Router, F
 
-from src.api.handlers import get_user_by_id, get_free_users, get_doctor_patients, update_user,get_user_diseases_url
+from src.api.handlers import get_user_by_id, get_free_users, get_doctor_patients, update_user, get_user_diseases_url
 from src.localizations.main import get_text
 from src.middleware.auth import DoctorAuthMiddleware
 from src.utils.message_formatters import generate_users_message
 from src.states.doctor_choose_patient import FreePatientChoose, DoctorsPatientChoose
 from src.states.disease_add import DiseaseAdd
+from src.states.doctor_appointment_add import DoctorAddAppointment
+from src.utils.regex import DATE_REGEX, TIME_REGEX
 
 doctor_router = Router()
 doctor_router.message.middleware(DoctorAuthMiddleware())
@@ -185,16 +188,19 @@ async def get_patient_medical_card(callback: CallbackQuery, state: FSMContext):
 
     file = URLInputFile(
         await get_user_diseases_url(user_id=patient_id,
-                                    period_for_load=-1, # -1 потому что всегда получаем полную карточку
+                                    period_for_load=-1,  # -1 потому что всегда получаем полную карточку
                                     user_language=user_language,
                                     response_format="docx"),
         filename=get_text("diseases_filename", user_language)
     )
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=
     [
+        [InlineKeyboardButton(text=get_text("back_to_patient_menu_button", user_language),
+                              callback_data=f"{patient_id}")],
         [InlineKeyboardButton(text=get_text("doctor_menu_button", user_language),
                               callback_data="doctor_menu")]
     ])
+    await state.set_state(DoctorsPatientChoose.patient_id)
     await callback.message.delete()
 
     await callback.message.answer_document(caption=get_text("get_patient_medical_card_message", user_language),
@@ -204,7 +210,7 @@ async def get_patient_medical_card(callback: CallbackQuery, state: FSMContext):
 
 
 @doctor_router.callback_query(DoctorsPatientChoose.action and F.data == "add_disease_for_patient")
-async def choose_doctor_patient_id_handler(callback: CallbackQuery, state: FSMContext):
+async def doctor_choose_patient_id_handler(callback: CallbackQuery, state: FSMContext):
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
 
     await callback.message.answer(get_text("add_disease_message", user_language))
@@ -213,3 +219,68 @@ async def choose_doctor_patient_id_handler(callback: CallbackQuery, state: FSMCo
 
     await state.set_state(DiseaseAdd.title)
     await state.update_data(for_patient=patient_id)
+
+
+@doctor_router.callback_query(DoctorsPatientChoose.action and F.data == "add_appointment_for_patient")
+async def appointment_add_handler(callback: CallbackQuery, state: FSMContext):
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+    patient_id = (await state.get_data())["patient_id"]
+    await state.clear()
+    await callback.message.edit_text(get_text("appointment_date_message", user_language))
+    await state.set_state(DoctorAddAppointment.date)
+    await state.update_data(patient_id=patient_id)
+
+
+@doctor_router.message(DoctorAddAppointment.date)
+async def appointment_date_handler(message: Message, state: FSMContext):
+    user_language: str = (await get_user_by_id(message.chat.id))['language']
+    date = message.text.lower()
+    if not re.fullmatch(DATE_REGEX, date):
+        await message.answer(text=get_text("incorrect_date_message", lang=user_language))
+        return
+    await state.update_data(date=date)
+    await message.answer(get_text("appointment_time_message", user_language))
+    await state.set_state(DoctorAddAppointment.time)
+
+
+@doctor_router.message(DoctorAddAppointment.time)
+async def appointment_time_handler(message: Message, state: FSMContext):
+    user_language: str = (await get_user_by_id(message.chat.id))['language']
+    time = message.text.lower()
+    if not re.match(TIME_REGEX, time):
+        await message.answer(get_text("time_format_error", user_language))
+        return
+    await state.update_data(time=time)
+    buttons: list[list[InlineKeyboardButton]] = [
+        [InlineKeyboardButton(text=get_text("yes", user_language),
+                              callback_data="yes_button")
+         ],
+        [InlineKeyboardButton(text=get_text("no", user_language),
+                              callback_data="no_button")
+         ],
+    ]
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    await message.answer(get_text("appointment_notify_your_self_message", user_language),
+                         reply_markup=inline_keyboard)
+    await state.set_state(DoctorAddAppointment.notify_your_self)
+
+
+@doctor_router.callback_query(DoctorAddAppointment.notify_your_self)
+async def appointment_self_notify_handler(callback: CallbackQuery, state: FSMContext):
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+    if callback.data.startswith("yes"):
+        await state.update_data(notify_your_self=True)
+    else:
+        await state.update_data(notify_your_self=False)
+    notification_data = await state.get_data()
+    print(notification_data)
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=
+    [
+        [InlineKeyboardButton(text=get_text("back_to_patient_menu_button", user_language),
+                              callback_data=f"{notification_data['patient_id']}")],
+        [InlineKeyboardButton(text=get_text("doctor_menu_button", user_language),
+                              callback_data="doctor_menu")]
+    ])
+    await state.set_state(DoctorsPatientChoose.patient_id)
+    await callback.message.edit_text(get_text("appointment_add_success_message", user_language),
+                                     reply_markup=inline_keyboard)

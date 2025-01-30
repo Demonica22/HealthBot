@@ -2,6 +2,9 @@ localization = {
     "system_clear_keyboard": "Очищаю клавиатуру...",
     "unexpected_error": "Непредвиденная ошибка: {}",
     "not_supported_message": "Извините, я не поддерживаю такое(",
+    "incorrect_date_message": "Вы ввели дату в неверном формате, пожалуйста, введите в формате ДД.ММ.ГГГГ - 21.10.2024",
+    "time_format_error": "Время следует вводить в формате ЧЧ:ММ!",
+
     # РЕГИСТРАЦИЯ
     "greet_message": "Привет, {}!",
     "language_message": "Выберите ваш язык:",
@@ -51,7 +54,6 @@ localization = {
     "disease_treatment_plan_message": "Если у вас есть план лечения напишите его:",
     "disease_date_start_message": "Когда заболели? (введите в формате ДД.ММ.ГГГГ)",
     "disease_date_end_message": "Когда выздоровели? (введите в формате ДД.ММ.ГГГГ)",
-    "disease_incorrect_date": "Вы ввели дату в неверном формате, пожалуйста, введите в формате ДД.ММ.ГГГГ - 21.10.2024",
     "disease_still_sick_message": "До сих пор болеете?",
     "disease_add_success_message": "Болезнь успешно добавлена!",
     "disease_choose_inline_tip": "Введите свою болезнь или выберите из списка",
@@ -104,7 +106,6 @@ localization = {
     "notifications_times_a_day_type_error": "Введите количество приемов в день числом!",
 
     "notifications_choose_time_message": "Введите время для приема №{}:",
-    "notifications_time_format_error": "Время следует вводить в формате ЧЧ:ММ!",
     "notifications_time_increase_error": "Приемы нужно вводить по возрастанию, то есть "
                                          "каждый следующий прием должен быть позже предыдущего!",
     "notifications_add_successful_message": "Уведомление о приеме лекарства {medicine_name}\n"
@@ -135,9 +136,14 @@ localization = {
     "doctor_choose_patient_button": "Выбрать пациента",
     "patient_choose_success_message": "Пациент {} взят вами",
     "choose_patient_message": "Выберите пациента:",
-    "patient_actions_message": "Выберите действие, которое хотите сделать:",
+    "patient_actions_message": "Вы просматриваете пациента: {}\nВыберите действие, которое хотите сделать:",
     "add_disease_for_patient_button": "Добавить болезнь пациенту",
-    "add_appointment_for_patient_button": "Добавить запись к врачу #TODO",
+    "add_appointment_for_patient_button": "Добавить запись к врачу",
     "get_patient_medical_card_button": "Посмотреть карту пациента",
     "get_patient_medical_card_message": "Вот карта вашего пациента:",
+    "appointment_date_message": "Введите дату приема (в формате ДД.ММ.ГГГГ)",
+    "appointment_time_message": "Введите время приема (в формате ЧЧ:ММ)",
+    "appointment_notify_your_self_message": "Уведомить вас об этом приеме?",
+    "appointment_add_success_message":"Уведомление о приеме успешно добавлено!",
+    "back_to_patient_menu_button":"Вернуться в меню пациента"
 }

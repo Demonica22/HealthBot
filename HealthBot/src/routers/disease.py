@@ -24,6 +24,7 @@ from src.api.handlers import (
 from src.localizations import get_text
 from src.states.disease_add import DiseaseAdd
 from src.states.disease_request import DiseaseRequest
+from src.states.doctor_choose_patient import DoctorsPatientChoose
 from src.utils.regex import DATE_REGEX
 from src.utils.message_formatters import generate_diseases_message, generate_active_diseases_message
 from src.utils.chat_keyboard_clearer import remove_chat_buttons
@@ -82,7 +83,7 @@ async def date_from_chosen(message: Message, state: FSMContext):
     if date_candidate := check_message_for_date(date_from, user_language):
         date_from = date_candidate
     elif not re.fullmatch(DATE_REGEX, date_from):
-        await message.answer(text=get_text("disease_incorrect_date", lang=user_language))
+        await message.answer(text=get_text("incorrect_date_message", lang=user_language))
         return
     await state.update_data(date_from=date_from)
     await remove_chat_buttons(message, user_language)
@@ -113,12 +114,16 @@ async def disease_add_end(user_language,
     if patient_id := data.get("for_patient"):
         data['user_id'] = patient_id
         inline_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text=get_text("back_to_patient_menu_button", user_language),
+                                  callback_data=f"{patient_id}")],
             [InlineKeyboardButton(text=get_text("doctor_menu_button", user_language),
                                   callback_data="doctor_menu")]
         ])
+        await state.set_state(DoctorsPatientChoose.patient_id)
+
     else:
         data['user_id'] = message.chat.id
-
+        await state.clear()
     try:
         await add_disease(data)
     except Exception as x:
@@ -135,7 +140,6 @@ async def disease_add_end(user_language,
         await message.answer(text=get_text("disease_add_success_message", lang=user_language),
                              reply_markup=inline_keyboard)
 
-    await state.clear()
 
 
 @disease_router.callback_query(DiseaseAdd.still_sick)
@@ -160,7 +164,7 @@ async def date_to_chosen(message: Message, state: FSMContext):
     if date_candidate := check_message_for_date(date_to, user_language):
         date_to = date_candidate
     elif not re.fullmatch(DATE_REGEX, date_to):
-        await message.answer(text=get_text("disease_incorrect_date", lang=user_language))
+        await message.answer(text=get_text("incorrect_date_message", lang=user_language))
         return
     await remove_chat_buttons(message, user_language)
     await state.update_data(date_to=date_to)
