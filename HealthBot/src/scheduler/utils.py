@@ -46,7 +46,8 @@ async def filter_notifications(data: list[dict]) -> tuple[list[dict], list[str]]
             notification_data['start_date'] = (datetime.datetime.strptime(notification_data['start_date'], "%d.%m.%Y")
                                                .replace(tzinfo=MSK))
         if notification_data['end_date'] < datetime.datetime.now(MSK):
-            outdated_notifications.append(notification_data['id'])
+            if 'id' in notification_data:
+                outdated_notifications.append(notification_data['id'])
         else:
             notifications_to_schedule.append(notification_data)
 
