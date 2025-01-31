@@ -46,7 +46,7 @@ async def get_user_by_id(id: int) -> dict | None:
 
 async def update_user(user_id: int,
                       field: str,
-                      new_data: str):
+                      new_data: str | int):
     async with aiohttp.ClientSession() as session:
         async with session.patch(USERS_URL + f"{user_id}",
                                  json={

@@ -152,7 +152,7 @@ async def choose_doctor_patient_handler(callback: CallbackQuery, state: FSMConte
                                      reply_markup=inline_keyboard)
 
 
-@doctor_router.callback_query(DoctorsPatientChoose.patient_id)
+@doctor_router.callback_query(DoctorsPatientChoose.patient_id and F.data.isdigit())
 async def choose_doctor_patient_id_handler(callback: CallbackQuery, state: FSMContext):
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
     id_ = callback.data
@@ -170,6 +170,9 @@ async def choose_doctor_patient_id_handler(callback: CallbackQuery, state: FSMCo
             text=get_text("get_patient_medical_card_button", user_language),
             callback_data="get_patient_medical_card")],
         [InlineKeyboardButton(
+            text=get_text("drop_patient_button", user_language),
+            callback_data="drop_patient")],
+        [InlineKeyboardButton(
             text=get_text("back_button", user_language),
             callback_data="back_choose_doctors_patient")],
         [InlineKeyboardButton(
@@ -184,7 +187,48 @@ async def choose_doctor_patient_id_handler(callback: CallbackQuery, state: FSMCo
         reply_markup=inline_keyboard)
 
 
-@doctor_router.callback_query(F.data == "get_patient_medical_card")
+@doctor_router.callback_query(DoctorsPatientChoose.action and F.data == "drop_patient")
+async def make_sure_to_drop_patient(callback: CallbackQuery, state: FSMContext):
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+    patient = await get_user_by_id((await state.get_data())["patient_id"])
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=
+    [
+        [InlineKeyboardButton(text=get_text("yes", user_language),
+                              callback_data=f"sure_to_drop_patient")],
+        [InlineKeyboardButton(text=get_text("back_to_patient_menu_button", user_language),
+                              callback_data=f"{patient['id']}")],
+    ])
+    await state.set_state(DoctorsPatientChoose.patient_id)
+    await callback.message.edit_text(get_text("sure_to_drop_patient_message", user_language)
+                                     .format(patient['name']),
+                                     reply_markup=inline_keyboard
+                                     )
+
+
+@doctor_router.callback_query(F.data == "sure_to_drop_patient")
+async def drop_patient(callback: CallbackQuery, state: FSMContext):
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+    patient_id = (await state.get_data())["patient_id"]
+    patient = await get_user_by_id(int(patient_id))
+    await update_user(
+        user_id=int(patient_id),
+        field='doctor_id',
+        new_data=0  # cтавим 0, потому что если поставить None апишка проигнорирует
+    )
+    buttons: list[list[InlineKeyboardButton]] = [
+        [InlineKeyboardButton(
+            text=get_text("doctor_menu_button", user_language),
+            callback_data="doctor_menu")],
+    ]
+
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    await callback.message.edit_text(
+        get_text("patient_drop_success_message", lang=user_language).format(patient['name']),
+        reply_markup=inline_keyboard)
+
+
+@doctor_router.callback_query(DoctorsPatientChoose.action and F.data == "get_patient_medical_card")
 async def get_patient_medical_card(callback: CallbackQuery, state: FSMContext):
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
     patient_id = (await state.get_data())["patient_id"]

@@ -61,6 +61,8 @@ async def update_user(user_id: int,
                       body: UserPatchSchema):
     try:
         update_data = body.model_dump(exclude_none=True)
+        if update_data.get('doctor_id', None) == 0:
+            update_data['doctor_id'] = None
         query = update(User).where(User.id == user_id).values(**update_data)
         await session.execute(query)
     except Exception as ex:
