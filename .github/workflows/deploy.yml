@@ -9,19 +9,23 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Set up SSH key
-        run: |
-          echo "Установка ssh ключей..."
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
       - name: Deploy to server
-        run: |
-          echo "Начинаю деплой..."
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} 
-          cd ${{ secrets.WORK_DIR }} && docker compose build telegram-bot database backend nginx
-          echo "Деплой прошел успешно."
+        uses: D3rHase/ssh-command-action@v0.2.2
+        with:
+          host: ${{secrets.SERVER_IP}}
+          user: ${{secrets.SSH_USER}}
+          private_key: ${{secrets.SSH_PRIVATE_KEY}}
+          command: |
+            echo "Начинаю деплой...";
+            # ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} 
+            cd ${{ secrets.WORK_DIR }};
+            echo "Сборка контейнеров.";
+            docker compose build telegram-bot database backend nginx;
+            echo "Применение миграций";
+            docker compose up -d database;
+            docker compose run backend "alembic upgrade head";
+            echo "Запуск контейнеров";
+            echo "Деплой прошел успешно";
       - name: cleanup
           
         run: |
