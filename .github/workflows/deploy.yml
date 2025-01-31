@@ -23,7 +23,7 @@ jobs:
             docker compose build telegram-bot database backend nginx;
             echo "Применение миграций";
             docker compose up -d database;
-            docker compose run backend "python -m alembic upgrade head";
+            docker compose run backend alembic upgrade head;
             echo "Запуск контейнеров";
             echo "Деплой прошел успешно";
       - name: cleanup
