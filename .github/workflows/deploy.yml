@@ -17,8 +17,8 @@ jobs:
           private_key: ${{secrets.SSH_PRIVATE_KEY}}
           command: |
             echo "Начинаю деплой...";
-            # ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} 
             cd ${{ secrets.WORK_DIR }};
+            docker compose down;
             echo "Сборка контейнеров.";
             docker compose build telegram-bot database backend nginx;
             echo "Применение миграций";
