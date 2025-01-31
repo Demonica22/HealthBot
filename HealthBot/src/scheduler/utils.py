@@ -82,6 +82,8 @@ async def notification_cleanup():
     logging.info("Очищаю старые уведомления")
     for notification in notifications:
         notification['end_date'] = datetime.datetime.fromisoformat(notification['end_date']).strftime("%d.%m.%Y")
+        if notification.get('start_date'):
+            notification['start_date'] = datetime.datetime.fromisoformat(notification['start_date']).strftime("%d.%m.%Y")
     _, outdated_notifications_ids = await filter_notifications(notifications)
     await delete_notifications(outdated_notifications_ids)
 
