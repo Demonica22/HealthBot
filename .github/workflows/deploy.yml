@@ -19,6 +19,8 @@ jobs:
             echo "Начинаю деплой...";
             cd ${{ secrets.WORK_DIR }};
             docker compose down;
+            git checkout ${{ secrets.MAIN_BRANCH }};
+            git pull;
             echo "Сборка контейнеров.";
             docker compose build telegram-bot database backend nginx;
             echo "Применение миграций";
