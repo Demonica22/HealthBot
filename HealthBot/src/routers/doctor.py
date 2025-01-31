@@ -1,10 +1,13 @@
 import re
+import logging
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, URLInputFile
 from aiogram.fsm.context import FSMContext
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command
 from aiogram import Router, F
 
-from src.api.handlers import get_user_by_id, get_free_users, get_doctor_patients, update_user, get_user_diseases_url
+from src.api.handlers import get_user_by_id, get_free_users, get_doctor_patients, update_user, get_user_diseases_url, \
+    add_notification
+from src.scheduler.utils import schedule_notifications, schedule_doctor_visit
 from src.localizations.main import get_text
 from src.middleware.auth import DoctorAuthMiddleware
 from src.utils.message_formatters import generate_users_message
@@ -267,13 +270,15 @@ async def appointment_time_handler(message: Message, state: FSMContext):
 
 @doctor_router.callback_query(DoctorAddAppointment.notify_your_self)
 async def appointment_self_notify_handler(callback: CallbackQuery, state: FSMContext):
-    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+    doctor = await get_user_by_id(callback.message.chat.id)
+    user_language: str = doctor['language']
     if callback.data.startswith("yes"):
         await state.update_data(notify_your_self=True)
     else:
         await state.update_data(notify_your_self=False)
     notification_data = await state.get_data()
-    print(notification_data)
+    patient = await get_user_by_id(notification_data['patient_id'])
+
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=
     [
         [InlineKeyboardButton(text=get_text("back_to_patient_menu_button", user_language),
@@ -282,5 +287,18 @@ async def appointment_self_notify_handler(callback: CallbackQuery, state: FSMCon
                               callback_data="doctor_menu")]
     ])
     await state.set_state(DoctorsPatientChoose.patient_id)
+    notifications = await schedule_doctor_visit(doctor, patient, notification_data)
+    try:
+        for notification_data_piece in notifications:
+            await add_notification(notification_data_piece)
+
+    except Exception as x:
+        logging.error(x)
+        await callback.message.answer(get_text("notifications_add_error", user_language).format(x),
+                                      reply_markup=inline_keyboard)
+        await state.clear()
+        return
+    await schedule_notifications(bot=callback.message.bot,
+                                 data=notifications)
     await callback.message.edit_text(get_text("appointment_add_success_message", user_language),
                                      reply_markup=inline_keyboard)

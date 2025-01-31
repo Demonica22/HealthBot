@@ -48,7 +48,7 @@ def generate_notifications_message(notifications: list[dict], user_language: str
     message = "--------------------\n"
     for disease in notifications:
         message += (
-            f"<b>{get_text("notifications_medicine_name_label", user_language)}:</b>\n{disease['medicine_name']}\n"
+            f"<b>{disease['message']}</b>\n"
             f"<b>{get_text("notifications_end_date_label", user_language)}:</b>\n{disease['end_date']}\n"
         )
         message += get_text("notifications_in_label", user_language)

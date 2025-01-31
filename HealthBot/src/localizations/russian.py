@@ -121,6 +121,7 @@ localization = {
     "notifications_choose_to_delete": "Выберите какое уведомление вы хотите удалить:\n",
     "notification_deleted_message": "Уведомление успешно удалено!",
     "notifications_empty_list": "У вас пока нет уведомлений",
+    "notifications_add_error": "Ошибка добавления уведомления: {}",
     "day_word": "день",
     "what_is_next": "Что делаем дальше?",
 
@@ -144,6 +145,8 @@ localization = {
     "appointment_date_message": "Введите дату приема (в формате ДД.ММ.ГГГГ)",
     "appointment_time_message": "Введите время приема (в формате ЧЧ:ММ)",
     "appointment_notify_your_self_message": "Уведомить вас об этом приеме?",
-    "appointment_add_success_message":"Уведомление о приеме успешно добавлено!",
-    "back_to_patient_menu_button":"Вернуться в меню пациента"
+    "appointment_add_success_message": "Уведомление о приеме успешно добавлено!",
+    "appointment_notification_for_patient_message": 'У вас запланирован прием у врача {} {} в {}',
+    "appointment_notification_for_doctor_message":'У вас запланирован прием пациента {} {} в {}',
+    "back_to_patient_menu_button": "Вернуться в меню пациента"
 }

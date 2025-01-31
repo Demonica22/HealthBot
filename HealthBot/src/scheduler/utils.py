@@ -17,20 +17,22 @@ async def send_notification(bot: Bot,
 
 async def schedule_notification(bot: Bot,
                                 user_id: int,
-                                user_language: str,
                                 end_date: datetime.datetime,
-                                time: tuple[int],
-                                medicine_name: str = None):
-    message_text = get_text("notifications_message", user_language).format(medicine_name)
-    logging.debug(f'Scheduled notification at {time} for {user_id}, end_date = {end_date}, with text = {message_text}')
+                                time: tuple[int, int],
+                                start_date: datetime.datetime,
+                                message: str = None):
+    logging.debug(
+        f'Scheduled notification at {time} for {user_id},start_date = {start_date}, '
+        f'end_date = {end_date}, with text = {message}')
+
     scheduler.add_job(
         func=send_notification,
         kwargs={
             "bot": bot,
             "user_id": user_id,
-            "message_text": message_text
+            "message_text": message
         },
-        trigger=CronTrigger(hour=time[0], minute=time[1], end_date=end_date)
+        trigger=CronTrigger(hour=time[0], minute=time[1], end_date=end_date, start_date=start_date)
     )
 
 
@@ -40,6 +42,9 @@ async def filter_notifications(data: list[dict]) -> tuple[list[dict], list[str]]
     for notification_data in data:
         notification_data['end_date'] = datetime.datetime.strptime(notification_data['end_date'], "%d.%m.%Y").replace(
             tzinfo=MSK)
+        if notification_data.get('start_date'):
+            notification_data['start_date'] = (datetime.datetime.strptime(notification_data['start_date'], "%d.%m.%Y")
+                                               .replace(tzinfo=MSK))
         if notification_data['end_date'] < datetime.datetime.now(MSK):
             outdated_notifications.append(notification_data['id'])
         else:
@@ -60,16 +65,14 @@ async def schedule_notifications(bot: Bot,
                                  data: list[dict]) -> list[str]:
     notifications_to_schedule, outdated_notifications = await filter_notifications(data)
     for notification_data in notifications_to_schedule:
-        user_language: str = (await get_user_by_id(notification_data['user_id']))['language']
-
         for time_data in notification_data['time_notifications']:
             time = tuple(map(int, time_data['time'].split(":")))
             await schedule_notification(bot,
                                         user_id=notification_data['user_id'],
-                                        user_language=user_language,
                                         end_date=notification_data['end_date'],
                                         time=time,
-                                        medicine_name=notification_data['medicine_name'])
+                                        start_date=notification_data.get('start_date', datetime.datetime.now(MSK)),
+                                        message=notification_data['message'])
 
     return outdated_notifications
 
@@ -90,3 +93,55 @@ async def schedule_notification_cleanup():
     scheduler.add_job(
         func=notification_cleanup,
         trigger=CronTrigger(minute=minute_to_delete_notifications))
+
+
+async def schedule_doctor_visit(doctor: dict, patient: dict, notification_data: dict) -> list[dict]:
+    one_hour_before = notification_data['time'].split(":")
+    if one_hour_before[0] in ("00", "0"):
+        one_hour_before = ["00", "00"]
+    else:
+        hour = str(int(one_hour_before[0]) - 1)
+        if len(hour) == 1:
+            hour = "0" + hour
+        one_hour_before = [hour, one_hour_before[1]]
+    one_hour_before = ":".join(one_hour_before)
+    notifications = [
+        # Уведомление за день до приема и в день приема (ровно во время приема)
+        {
+            'user_id': notification_data['patient_id'],
+            'message': get_text("appointment_notification_for_patient_message", patient['language'])
+            .format(doctor['name'],
+                    notification_data['date'],
+                    notification_data['time']),
+            'end_date': (datetime.datetime.strptime(notification_data['date'], "%d.%m.%Y") + datetime.timedelta(
+                days=1)).strftime("%d.%m.%Y"),
+            'start_date': (datetime.datetime.strptime(notification_data['date'], "%d.%m.%Y") - datetime.timedelta(
+                days=1)).strftime("%d.%m.%Y"),
+            'time_notifications': [{'time': notification_data['time']}]
+        },
+        # Уведомление за час до приема в дату приема
+        {
+            'user_id': notification_data['patient_id'],
+            'message': get_text("appointment_notification_for_patient_message", patient['language'])
+            .format(doctor['name'],
+                    notification_data['date'],
+                    notification_data['time']),
+            'end_date': (datetime.datetime.strptime(notification_data['date'], "%d.%m.%Y") + datetime.timedelta(
+                days=1)).strftime("%d.%m.%Y"),
+            'start_date': notification_data['date'],
+            'time_notifications': [{'time': one_hour_before}]
+        },
+        # Уведомление для доктора, ровно в день приема
+        {
+            'user_id': doctor['id'],
+            'message': get_text("appointment_notification_for_doctor_message", doctor['language'])
+            .format(patient['name'],
+                    notification_data['date'],
+                    notification_data['time']),
+            'end_date': (datetime.datetime.strptime(notification_data['date'], "%d.%m.%Y") + datetime.timedelta(
+                days=1)).strftime("%d.%m.%Y"),
+            'start_date': notification_data['date'],
+            'time_notifications': [{'time': notification_data['time']}]
+        },
+    ]
+    return notifications
