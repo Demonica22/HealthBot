@@ -19,7 +19,8 @@ jobs:
       - name: Deploy to server
         run: |
           echo "Начинаю деплой..."
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && docker compose up -d --build telegram-bot database backend nginx"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} 
+          cd ${{ secrets.WORK_DIR }} && docker compose build telegram-bot database backend nginx
           echo "Деплой прошел успешно."
       - name: cleanup
           
