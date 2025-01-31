@@ -25,6 +25,7 @@ jobs:
             docker compose up -d database;
             docker compose run backend alembic upgrade head;
             echo "Запуск контейнеров";
+            docker compose up -d telegram-bot database backend nginx;
             echo "Деплой прошел успешно";
       - name: cleanup
           
