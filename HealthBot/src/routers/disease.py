@@ -295,7 +295,7 @@ async def get_active_diseases(callback: CallbackQuery):
 
 
 @disease_router.callback_query(F.data == "mark_disease_as_finished")
-async def mark_disease_as_finished(callback: CallbackQuery):
+async def choose_disease_to_finish(callback: CallbackQuery):
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
 
     buttons = [

@@ -5,12 +5,21 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 from aiogram import Router, F
 
-from src.api.handlers import get_user_by_id, get_free_users, get_doctor_patients, update_user, get_user_diseases_url, \
-    add_notification
+from src.api.handlers import (
+    get_user_by_id,
+    get_free_users,
+    get_doctor_patients,
+    update_user,
+    get_user_diseases_url,
+    add_notification,
+    get_user_active_diseases,
+    finish_disease,
+    get_disease
+)
 from src.scheduler.utils import schedule_notifications, schedule_doctor_visit
 from src.localizations.main import get_text
 from src.middleware.auth import DoctorAuthMiddleware
-from src.utils.message_formatters import generate_users_message
+from src.utils.message_formatters import generate_users_message, generate_active_diseases_message
 from src.states.doctor_choose_patient import FreePatientChoose, DoctorsPatientChoose
 from src.states.disease_add import DiseaseAdd
 from src.states.doctor_appointment_add import DoctorAddAppointment
@@ -157,6 +166,8 @@ async def choose_doctor_patient_id_handler(callback: CallbackQuery, state: FSMCo
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
     id_ = callback.data
     patient = await get_user_by_id(int(id_))
+    diseases = await get_user_active_diseases(int(id_))
+
     await state.update_data(patient_id=id_)
     await state.set_state(DoctorsPatientChoose.action)
     buttons: list[list[InlineKeyboardButton]] = [
@@ -179,12 +190,76 @@ async def choose_doctor_patient_id_handler(callback: CallbackQuery, state: FSMCo
             text=get_text("doctor_menu_button", user_language),
             callback_data="doctor_menu")],
     ]
-
+    if diseases:
+        buttons.insert(1,
+                       [InlineKeyboardButton(
+                           text=get_text("end_disease_for_patient_button", user_language),
+                           callback_data="end_disease_for_patient")]
+                       )
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
     await callback.message.edit_text(
         get_text("patient_actions_message", lang=user_language).format(patient['name']),
         reply_markup=inline_keyboard)
+
+
+@doctor_router.callback_query(F.data == "end_disease_for_patient")
+async def doctor_choose_disease_to_finish(callback: CallbackQuery, state: FSMContext):
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+    patient_id = (await state.get_data())["patient_id"]
+    buttons = [
+
+        [InlineKeyboardButton(text=get_text("back_button", user_language),
+                              callback_data=f"{patient_id}")],
+
+    ]
+
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    try:
+        diseases = await get_user_active_diseases(patient_id)
+    except Exception as x:
+        logging.error(f"Ошибка получения активных болезней: {x}")
+        await callback.message.answer(text=get_text("unexpected_error", user_language).format(x),
+                                      reply_markup=inline_keyboard)
+        return
+    for i, disease in enumerate(diseases):
+        button = [InlineKeyboardButton(text=f"№{i + 1} {disease['title']}",
+                                       callback_data=f"doctor_disease_id_{disease['id']}")]
+        buttons.insert(i, button)
+
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    await callback.message.edit_text(
+        get_text("diseases_choose_to_finish", user_language) + generate_active_diseases_message(diseases,
+                                                                                                user_language),
+        reply_markup=inline_keyboard)
+
+
+@doctor_router.callback_query(F.data.startswith("doctor_disease_id"))
+async def mark_disease_as_finished(callback: CallbackQuery, state: FSMContext):
+    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
+    patient_id = (await state.get_data())["patient_id"]
+
+    disease_id = int(callback.data.split("_")[-1])
+    buttons = [
+        [InlineKeyboardButton(text=get_text("back_button", user_language),
+                              callback_data="end_disease_for_patient")],
+        [InlineKeyboardButton(text=get_text("back_to_patient_menu_button", user_language),
+                              callback_data=f"{patient_id}")],
+    ]
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    try:
+        await finish_disease(disease_id)
+    except Exception as x:
+        logging.error(f"Ошибка завершения болезни: {x}")
+        await callback.message.answer(text=get_text("unexpected_error", user_language).format(x),
+                                      reply_markup=inline_keyboard)
+        return
+    disease = await get_disease(disease_id)
+
+    await callback.message.edit_text(get_text("diseases_finished_message", user_language).format(disease['title']),
+                                     reply_markup=inline_keyboard)
 
 
 @doctor_router.callback_query(DoctorsPatientChoose.action and F.data == "drop_patient")
