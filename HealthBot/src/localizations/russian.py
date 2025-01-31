@@ -138,7 +138,7 @@ localization = {
     "patient_choose_success_message": "Пациент {} взят вами",
     "choose_patient_message": "Выберите пациента:",
     "patient_actions_message": "Вы просматриваете пациента: {}\nВыберите действие, которое хотите сделать:",
-    "add_disease_for_patient_button": "Добавить болезнь пациенту",
+    "add_disease_for_patient_button": "Зафиксировать заболевание",
     "add_appointment_for_patient_button": "Добавить запись к врачу",
     "get_patient_medical_card_button": "Посмотреть карту пациента",
     "get_patient_medical_card_message": "Вот карта вашего пациента:",
