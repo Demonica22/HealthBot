@@ -11,8 +11,9 @@ class Notification(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     user: Mapped["User"] = relationship(back_populates="notifications")
-    medicine_name: Mapped[str]
+    message: Mapped[str] = mapped_column(nullable=True)
     end_date: Mapped[datetime.datetime]
+    start_date: Mapped[datetime.datetime] = mapped_column(nullable=True)
     time_notifications: Mapped[list["NotificationTime"]] = relationship(back_populates="notification", uselist=True)
 
 

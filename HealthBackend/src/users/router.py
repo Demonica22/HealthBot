@@ -1,5 +1,6 @@
 from fastapi import APIRouter, status
 from sqlalchemy import select, update
+from sqlalchemy.orm import selectinload
 
 from src.database.session import SessionDep
 from src.users.models import User
@@ -34,6 +35,18 @@ async def add_user(data: UserSchema, session: SessionDep):
     return new_user
 
 
+@router.get("/free")
+async def get_free_users(session: SessionDep,
+                         with_diseases: bool = False):
+    query = select(User).where(User.doctor_id == None)
+    if with_diseases:
+        query = query.options(
+            selectinload(User.diseases))
+    result = await session.execute(query)
+    users = result.scalars().all()
+    return users
+
+
 @router.get("/{user_id}")
 async def get_user(user_id: int, session: SessionDep):
     query = select(User).where(User.id == user_id)
@@ -48,6 +61,8 @@ async def update_user(user_id: int,
                       body: UserPatchSchema):
     try:
         update_data = body.model_dump(exclude_none=True)
+        if update_data.get('doctor_id', None) == 0:
+            update_data['doctor_id'] = None
         query = update(User).where(User.id == user_id).values(**update_data)
         await session.execute(query)
     except Exception as ex:
@@ -56,3 +71,17 @@ async def update_user(user_id: int,
     else:
         await session.commit()
         return {"success": True}
+
+
+@router.get("/by_doctor/{doctor_id}")
+async def get_doctors_users(doctor_id: int,
+                            session: SessionDep,
+                         with_diseases: bool = False
+                            ):
+    query = select(User).where(User.doctor_id == doctor_id)
+    if with_diseases:
+        query = query.options(
+            selectinload(User.diseases))
+    result = await session.execute(query)
+    users = result.scalars().all()
+    return users

@@ -82,7 +82,7 @@ async def notifications_delete(callback: CallbackQuery):
                                       reply_markup=inline_keyboard)
         return
     for i, notification in enumerate(notifications):
-        button = [InlineKeyboardButton(text=f"№{i + 1} {notification['medicine_name']}",
+        button = [InlineKeyboardButton(text=f"№{i + 1} {notification['message'].split(':')[1]}",
                                        callback_data=f"notification_id_{notification['id']}")]
         buttons.insert(i, button)
 
@@ -178,7 +178,7 @@ async def choose_time(message: Message, state: FSMContext):
 
     await state.update_data(times_a_day=int(message.text))
     await state.set_state(MedicineNotificationAdd.time_notifications)
-    await message.answer(get_text("notifications_time_format_error", user_language) + "\n" +
+    await message.answer(get_text("time_format_error", user_language) + "\n" +
                          get_text("notifications_time_increase_error", user_language))
     # тут в сообщении ниже константная единица из-за того что всегда отсюда мы придем за первым временем приема
     await message.answer(get_text("notifications_choose_time_message", user_language).format("1"))
@@ -188,7 +188,7 @@ async def choose_time(message: Message, state: FSMContext):
 async def choose_notification_times(message: Message, state: FSMContext):
     user_language: str = (await get_user_by_id(message.chat.id))['language']
     if not re.match(TIME_REGEX, message.text):
-        await message.answer(get_text("notifications_time_format_error", user_language))
+        await message.answer(get_text("time_format_error", user_language))
         return
     new_time_str = message.text
     new_time = tuple(map(int, new_time_str.split(":")))
@@ -217,19 +217,21 @@ async def choose_notification_times(message: Message, state: FSMContext):
         data.pop('times_a_day')
         data["end_date"] = (datetime.datetime.now(MSK) + datetime.timedelta(days=data.pop("duration"))).strftime(
             "%d.%m.%Y")
+        medicine_name = data.pop('medicine_name')
+        data['message'] = get_text("notifications_message", user_language).format(medicine_name)
         try:
             logging.info(f"Добавлено уведомление {data}")
             await add_notification(data)
         except Exception as x:
             logging.error(x)
-            await message.answer("Ошибочка")
+            await message.answer(get_text("notifications_add_error", user_language).format(x))
             await state.clear()
             return
         await schedule_notifications(bot=message.bot,
                                      data=[data])
         await message.answer(
             get_text("notifications_add_successful_message", user_language).format(
-                medicine_name=data['medicine_name'],
+                medicine_name=medicine_name,
                 duration=data['end_date'],
                 times=times_string),
             reply_markup=inline_keyboard

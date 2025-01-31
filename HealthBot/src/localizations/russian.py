@@ -2,6 +2,9 @@ localization = {
     "system_clear_keyboard": "Очищаю клавиатуру...",
     "unexpected_error": "Непредвиденная ошибка: {}",
     "not_supported_message": "Извините, я не поддерживаю такое(",
+    "incorrect_date_message": "Вы ввели дату в неверном формате, пожалуйста, введите в формате ДД.ММ.ГГГГ - 21.10.2024",
+    "time_format_error": "Время следует вводить в формате ЧЧ:ММ!",
+
     # РЕГИСТРАЦИЯ
     "greet_message": "Привет, {}!",
     "language_message": "Выберите ваш язык:",
@@ -51,7 +54,6 @@ localization = {
     "disease_treatment_plan_message": "Если у вас есть план лечения напишите его:",
     "disease_date_start_message": "Когда заболели? (введите в формате ДД.ММ.ГГГГ)",
     "disease_date_end_message": "Когда выздоровели? (введите в формате ДД.ММ.ГГГГ)",
-    "disease_incorrect_date": "Вы ввели дату в неверном формате, пожалуйста, введите в формате ДД.ММ.ГГГГ - 21.10.2024",
     "disease_still_sick_message": "До сих пор болеете?",
     "disease_add_success_message": "Болезнь успешно добавлена!",
     "disease_choose_inline_tip": "Введите свою болезнь или выберите из списка",
@@ -104,7 +106,6 @@ localization = {
     "notifications_times_a_day_type_error": "Введите количество приемов в день числом!",
 
     "notifications_choose_time_message": "Введите время для приема №{}:",
-    "notifications_time_format_error": "Время следует вводить в формате ЧЧ:ММ!",
     "notifications_time_increase_error": "Приемы нужно вводить по возрастанию, то есть "
                                          "каждый следующий прием должен быть позже предыдущего!",
     "notifications_add_successful_message": "Уведомление о приеме лекарства {medicine_name}\n"
@@ -120,7 +121,36 @@ localization = {
     "notifications_choose_to_delete": "Выберите какое уведомление вы хотите удалить:\n",
     "notification_deleted_message": "Уведомление успешно удалено!",
     "notifications_empty_list": "У вас пока нет уведомлений",
+    "notifications_add_error": "Ошибка добавления уведомления: {}",
     "day_word": "день",
     "what_is_next": "Что делаем дальше?",
 
+    # Doctors
+    "doctor_get_patients_button": "Список ваших пациентов",
+    "doctor_get_free_patients_button": "Список свободных пациентов",
+    "doctor_menu_button": "В меню доктора",
+    "doctor_menu": "Меню доктора",
+    "users_free_empty_list_message": "Свободных пациентов не найдено.",
+    "users_mine_empty_list_message": "У вас пока нет пациентов",
+    "current_diseases": "Текущие болезни",
+    "user_is_healthy": "Здоров(-а)",
+    "drop_patient_button": "Отказаться от пациента",
+    "doctor_choose_patient_button": "Выбрать пациента",
+    "patient_choose_success_message": "Пациент {} взят вами",
+    "sure_to_drop_patient_message": "Вы уверены что вы хотите отказаться от пациента {} ?",
+    "patient_drop_success_message": "Вы отказались от пациента {}",
+    "choose_patient_message": "Выберите пациента:",
+    "patient_actions_message": "Вы просматриваете пациента: {}\nВыберите действие, которое хотите сделать:",
+    "add_disease_for_patient_button": "Зафиксировать заболевание",
+    "end_disease_for_patient_button": "Завершить заболевание",
+    "add_appointment_for_patient_button": "Добавить запись к врачу",
+    "get_patient_medical_card_button": "Посмотреть карту пациента",
+    "get_patient_medical_card_message": "Вот карта вашего пациента:",
+    "appointment_date_message": "Введите дату приема (в формате ДД.ММ.ГГГГ)",
+    "appointment_time_message": "Введите время приема (в формате ЧЧ:ММ)",
+    "appointment_notify_your_self_message": "Уведомить вас об этом приеме?",
+    "appointment_add_success_message": "Уведомление о приеме успешно добавлено!",
+    "appointment_notification_for_patient_message": 'У вас запланирован прием у врача {} {} в {}',
+    "appointment_notification_for_doctor_message":'У вас запланирован прием пациента {} {} в {}',
+    "back_to_patient_menu_button": "Вернуться в меню пациента"
 }

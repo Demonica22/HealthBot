@@ -1,8 +1,9 @@
 import datetime
 
 from typing import Optional
-from pydantic import BaseModel,field_validator
+from pydantic import BaseModel, field_validator
 from src.utils.constants import STRING_DATE_FORMAT
+
 
 class NotificationTimeSchema(BaseModel):
     time: str
@@ -10,12 +11,13 @@ class NotificationTimeSchema(BaseModel):
 
 class NotificationAddSchema(BaseModel):
     user_id: int
-    medicine_name: str
+    message: str
     end_date: datetime.datetime
+    start_date: datetime.datetime = None
     time_notifications: list[NotificationTimeSchema] = None
 
-    @field_validator("end_date", mode='before')
-    def timestamp_to_date(cls, date) -> datetime.datetime:
+    @field_validator("end_date", "start_date", mode='before')
+    def timestamp_to_date(cls, date) -> datetime.datetime | None:
 
         if not date:
             return None
@@ -29,6 +31,7 @@ class NotificationAddSchema(BaseModel):
 class NotificationSchema(BaseModel):
     id: int
     user_id: int
-    medicine_name: str
+    message: str
     end_date: datetime.datetime
+    start_date: datetime.datetime | None = None
     time_notifications: list[NotificationTimeSchema] = None

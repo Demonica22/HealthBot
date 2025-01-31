@@ -48,12 +48,35 @@ def generate_notifications_message(notifications: list[dict], user_language: str
     message = "--------------------\n"
     for disease in notifications:
         message += (
-            f"<b>{get_text("notifications_medicine_name_label", user_language)}:</b>\n{disease['medicine_name']}\n"
+            f"<b>{disease['message']}</b>\n"
             f"<b>{get_text("notifications_end_date_label", user_language)}:</b>\n{disease['end_date']}\n"
         )
         message += get_text("notifications_in_label", user_language)
         for time in disease['time_notifications']:
             message += f"{time['time']} "
+        message += "\n"
+        message += f"\n--------------------\n"
+    return message
+
+
+def generate_users_message(users: list[dict], user_language: str, users_type: str) -> str:
+    if not users:
+        if users_type == "free":
+            return get_text("users_free_empty_list_message", user_language)
+        elif users_type == "mine":
+            return get_text("users_mine_empty_list_message", user_language)
+    message = "--------------------\n"
+    for user in users:
+        message += (
+            f"<b>{get_text("name_field", user_language)}:</b>\n{user['name']}\n"
+            f"<b>{get_text("gender_field", user_language)}:</b>\n{user['gender']}\n"
+        )
+        active_diseases = list(filter(lambda x: x['still_sick'], user['diseases']))
+        if active_diseases:
+            message += (f"<b>{get_text("current_diseases", user_language)}:</b>\n"
+                        f"{','.join([d['title'] for d in active_diseases])}")
+        else:
+            message += f"<b>{get_text('user_is_healthy', user_language)}</b>"
         message += "\n"
         message += f"\n--------------------\n"
     return message
