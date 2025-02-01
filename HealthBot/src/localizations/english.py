@@ -100,6 +100,7 @@ localization = {
     "notifications_duration_message": "How many days do you need to take the medicine?\n",
     "notifications_default_duration_list": ["3", "5", "7", "10", "14"],
     "notifications_duration_type_error": "Please enter the duration of medicine intake as a number!",
+    "notifications_times_a_day_validation_error": "The duration should be greater than zero!",
     "notifications_times_a_day_list": ["1", "2", "3", "4"],
     "notifications_times_a_day_inline_tip": "Choose from the suggested list or enter the number:\n",
     "notifications_times_a_day_message": "Choose how many times a day you need to take the medicine:\n",

@@ -104,7 +104,7 @@ localization = {
     "notifications_times_a_day_inline_tip": "Выберите из предложенного списка или введите число:\n",
     "notifications_times_a_day_message": "Выберите сколько раз в день вам нужно принимать лекарства:",
     "notifications_times_a_day_type_error": "Введите количество приемов в день числом!",
-
+    "notifications_times_a_day_validation_error": "Количество должно быть больше нуля!",
     "notifications_choose_time_message": "Введите время для приема №{}:",
     "notifications_time_increase_error": "Приемы нужно вводить по возрастанию, то есть "
                                          "каждый следующий прием должен быть позже предыдущего!",
@@ -151,6 +151,6 @@ localization = {
     "appointment_notify_your_self_message": "Уведомить вас об этом приеме?",
     "appointment_add_success_message": "Уведомление о приеме успешно добавлено!",
     "appointment_notification_for_patient_message": 'У вас запланирован прием у врача {} {} в {}',
-    "appointment_notification_for_doctor_message":'У вас запланирован прием пациента {} {} в {}',
+    "appointment_notification_for_doctor_message": 'У вас запланирован прием пациента {} {} в {}',
     "back_to_patient_menu_button": "Вернуться в меню пациента"
 }
