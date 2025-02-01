@@ -135,7 +135,7 @@ async def change_piece(callback: CallbackQuery, state: FSMContext):
         inline_keyboard = [[]]
         for callback_, text in AVAILABLE_LANGS.items():
             inline_keyboard.append([InlineKeyboardButton(text=text, callback_data=callback_)])
-        await callback.message.answer(text=get_text('language_message', user_language),
+        await callback.message.edit_text(text=get_text('language_message', user_language),
                                       reply_markup=InlineKeyboardMarkup(inline_keyboard=inline_keyboard))
     else:
         await callback.message.edit_text(
