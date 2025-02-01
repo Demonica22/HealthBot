@@ -176,7 +176,7 @@ async def choose_time(message: Message, state: FSMContext):
         await message.answer(get_text("notifications_times_a_day_type_error", user_language))
         return
     if not int(message.text) > 0:
-        await message.answer(get_text("notifications_times_a_day_type_error", user_language))
+        await message.answer(get_text("notifications_times_a_day_validation_error", user_language))
         return
 
     await state.update_data(times_a_day=int(message.text))
