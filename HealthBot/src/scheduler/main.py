@@ -11,10 +11,6 @@ async def start_up(bot):
 
     scheduler.start()
     notifications = await get_all_notifications()
-    for notification in notifications:
-        notification['end_date'] = datetime.datetime.fromisoformat(notification['end_date']).strftime("%d.%m.%Y")
-        if notification.get('start_date'):
-            notification['start_date'] = datetime.datetime.fromisoformat(notification['start_date']).strftime("%d.%m.%Y")
     outdated_notifications_ids = await schedule_notifications(bot, notifications)
     await delete_notifications(outdated_notifications_ids)
 

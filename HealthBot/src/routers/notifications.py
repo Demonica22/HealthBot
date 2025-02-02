@@ -218,8 +218,7 @@ async def choose_notification_times(message: Message, state: FSMContext):
         inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
         data['user_id'] = message.chat.id
         data.pop('times_a_day')
-        data["end_date"] = (datetime.datetime.now(MSK) + datetime.timedelta(days=data.pop("duration"))).strftime(
-            "%d.%m.%Y")
+        data["end_date"] = datetime.datetime.now(MSK) + datetime.timedelta(days=data.pop("duration"))
         medicine_name = data.pop('medicine_name')
         data['message'] = get_text("notifications_message", user_language).format(medicine_name)
         try:
@@ -235,7 +234,7 @@ async def choose_notification_times(message: Message, state: FSMContext):
         await message.answer(
             get_text("notifications_add_successful_message", user_language).format(
                 medicine_name=medicine_name,
-                duration=data['end_date'],
+                duration=data['end_date'].strftime("%m-%d-%Y, %H:%M:%S"),
                 times=times_string),
             reply_markup=inline_keyboard
         )

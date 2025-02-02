@@ -40,12 +40,9 @@ async def filter_notifications(data: list[dict]) -> tuple[list[dict], list[str]]
     outdated_notifications = []
     notifications_to_schedule = []
     for notification_data in data:
-        notification_data['end_date'] = datetime.datetime.strptime(notification_data['end_date'], "%d.%m.%Y").replace(
-            tzinfo=MSK)
-        if notification_data.get('start_date'):
-            notification_data['start_date'] = (datetime.datetime.strptime(notification_data['start_date'], "%d.%m.%Y")
-                                               .replace(tzinfo=MSK))
+        print(notification_data['end_date'], datetime.datetime.now(MSK))
         if notification_data['end_date'] < datetime.datetime.now(MSK):
+
             if 'id' in notification_data:
                 outdated_notifications.append(notification_data['id'])
         else:
@@ -81,10 +78,6 @@ async def schedule_notifications(bot: Bot,
 async def notification_cleanup():
     notifications = await get_all_notifications()
     logging.info("Очищаю старые уведомления")
-    for notification in notifications:
-        notification['end_date'] = datetime.datetime.fromisoformat(notification['end_date']).strftime("%d.%m.%Y")
-        if notification.get('start_date'):
-            notification['start_date'] = datetime.datetime.fromisoformat(notification['start_date']).strftime("%d.%m.%Y")
     _, outdated_notifications_ids = await filter_notifications(notifications)
     await delete_notifications(outdated_notifications_ids)
 
@@ -108,6 +101,9 @@ async def schedule_doctor_visit(doctor: dict, patient: dict, notification_data: 
             hour = "0" + hour
         one_hour_before = [hour, one_hour_before[1]]
     one_hour_before = ":".join(one_hour_before)
+    date = datetime.datetime.strptime(notification_data['date'], "%d.%m.%Y").replace(tzinfo=MSK)
+    end_date = (datetime.datetime.strptime(notification_data['date'] + " " + notification_data['time'],
+                                           "%d.%m.%Y %H:%M") + datetime.timedelta(hours=1)).replace(tzinfo=MSK)
     notifications = [
         # Уведомление за день до приема и в день приема (ровно во время приема)
         {
@@ -116,10 +112,8 @@ async def schedule_doctor_visit(doctor: dict, patient: dict, notification_data: 
             .format(doctor['name'],
                     notification_data['date'],
                     notification_data['time']),
-            'end_date': (datetime.datetime.strptime(notification_data['date'], "%d.%m.%Y") + datetime.timedelta(
-                days=1)).strftime("%d.%m.%Y"),
-            'start_date': (datetime.datetime.strptime(notification_data['date'], "%d.%m.%Y") - datetime.timedelta(
-                days=1)).strftime("%d.%m.%Y"),
+            'end_date': end_date,
+            'start_date': date - datetime.timedelta(days=1),
             'time_notifications': [{'time': notification_data['time']}]
         },
         # Уведомление за час до приема в дату приема
@@ -129,9 +123,8 @@ async def schedule_doctor_visit(doctor: dict, patient: dict, notification_data: 
             .format(doctor['name'],
                     notification_data['date'],
                     notification_data['time']),
-            'end_date': (datetime.datetime.strptime(notification_data['date'], "%d.%m.%Y") + datetime.timedelta(
-                days=1)).strftime("%d.%m.%Y"),
-            'start_date': notification_data['date'],
+            'end_date': end_date,
+            'start_date': date,
             'time_notifications': [{'time': one_hour_before}]
         },
         # Уведомление для доктора, ровно в день приема
@@ -141,9 +134,8 @@ async def schedule_doctor_visit(doctor: dict, patient: dict, notification_data: 
             .format(patient['name'],
                     notification_data['date'],
                     notification_data['time']),
-            'end_date': (datetime.datetime.strptime(notification_data['date'], "%d.%m.%Y") + datetime.timedelta(
-                days=1)).strftime("%d.%m.%Y"),
-            'start_date': notification_data['date'],
+            'end_date': end_date,
+            'start_date': date,
             'time_notifications': [{'time': notification_data['time']}]
         },
     ]

@@ -2,7 +2,7 @@ import datetime
 
 from typing import Optional
 from pydantic import BaseModel, field_validator
-from src.utils.constants import STRING_DATE_FORMAT
+from src.utils.constants import DATE_TIME_FORMAT
 
 
 class NotificationTimeSchema(BaseModel):
@@ -13,7 +13,7 @@ class NotificationAddSchema(BaseModel):
     user_id: int
     message: str
     end_date: datetime.datetime
-    start_date: datetime.datetime = None
+    start_date: datetime.datetime | None = None
     time_notifications: list[NotificationTimeSchema] = None
 
     @field_validator("end_date", "start_date", mode='before')
@@ -25,7 +25,7 @@ class NotificationAddSchema(BaseModel):
             raise TypeError(
                 f"date expected a string value, received {date!r}"
             )
-        return datetime.datetime.strptime(date, STRING_DATE_FORMAT)
+        return datetime.datetime.strptime(date, DATE_TIME_FORMAT)
 
 
 class NotificationSchema(BaseModel):

@@ -6,7 +6,7 @@ from http import HTTPStatus
 from os import getenv
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
-from src.api.schemas import DiseaseSchema
+from src.api.schemas import DiseaseSchema, NotificationSchema, NotificationPostSchema
 from src.utils.timezone import MSK
 
 load_dotenv()
@@ -130,7 +130,12 @@ async def get_disease(disease_id: int):
 async def add_notification(notification_data: dict) -> list[dict]:
     async with aiohttp.ClientSession() as session:
         logging.debug(f"Notification add: {notification_data}")
+        print(notification_data)
+        notification_data = NotificationPostSchema(**notification_data).model_dump()
+        print(notification_data)
+
         async with session.post(NOTIFICATIONS_URL, json=notification_data) as response:
+            print(await response.json())
             response.raise_for_status()
             return await response.json()
 
@@ -156,7 +161,7 @@ async def get_all_notifications() -> list[dict]:
     async with aiohttp.ClientSession() as session:
         async with session.get(NOTIFICATIONS_URL) as response:
             response.raise_for_status()
-            return await response.json()
+            return [NotificationSchema(**notification).model_dump() for notification in await response.json()]
 
 
 async def get_free_users() -> list[dict]:
