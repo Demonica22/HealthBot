@@ -40,9 +40,7 @@ async def filter_notifications(data: list[dict]) -> tuple[list[dict], list[str]]
     outdated_notifications = []
     notifications_to_schedule = []
     for notification_data in data:
-        print(notification_data['end_date'], datetime.datetime.now(MSK))
         if notification_data['end_date'] < datetime.datetime.now(MSK):
-
             if 'id' in notification_data:
                 outdated_notifications.append(notification_data['id'])
         else:

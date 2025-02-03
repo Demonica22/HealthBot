@@ -16,6 +16,7 @@ class DiseaseSchema(BaseModel):
 
 
 class NotificationSchema(BaseModel):
+    id : int
     user_id: int
     message: str
     end_date: datetime
