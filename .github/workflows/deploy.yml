@@ -15,7 +15,7 @@ jobs:
           host: ${{secrets.SERVER_IP}}
           user: ${{secrets.SSH_USER}}
           private_key: ${{secrets.SSH_PRIVATE_KEY}}
-          host_fingerprint: ${{ secrets.HOST_FINGERPRINT }}
+          # host_fingerprint: ${{ secrets.HOST_FINGERPRINT }}
           command: |
             echo "Начинаю деплой...";
             cd ${{ secrets.WORK_DIR }};
