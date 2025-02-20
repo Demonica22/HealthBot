@@ -117,6 +117,7 @@ localization = {
     "notifications_get_all_button": "View your notifications",
     "notifications_medicine_name_label": "Medicine name",
     "notifications_end_date_label": "Notify until",
+    "notifications_start_date_label": "Notify from",
     "notifications_in_label": "In ",
     "notifications_delete_button": "Delete notifications",
     "notifications_message": "You need to take the medicine: {}",

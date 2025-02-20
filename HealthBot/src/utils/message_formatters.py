@@ -46,11 +46,13 @@ def generate_notifications_message(notifications: list[dict], user_language: str
     if not notifications:
         return get_text("notifications_empty_list", user_language)
     message = "--------------------\n"
-    for notification in notifications:
+    for i, notification in enumerate(notifications):
         message += (
-            f"<b>{notification['message']}</b>\n"
+            f"({i + 1}) <b>{notification['message']}</b>\n"
             f"<b>{get_text("notifications_end_date_label", user_language)}:</b>\n{notification['end_date']}\n"
         )
+        if notification['start_date']:
+            message += f"<b>{get_text("notifications_start_date_label", user_language)}:</b>\n{notification['end_date']}\n"
         message += get_text("notifications_in_label", user_language)
         for time in notification['time_notifications']:
             message += f"{time['time']} "

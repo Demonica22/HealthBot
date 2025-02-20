@@ -115,6 +115,7 @@ localization = {
     "notifications_get_all_button": "Посмотреть свои уведомления",
     "notifications_medicine_name_label": "Название лекарства",
     "notifications_end_date_label": "Уведомлять до",
+    "notifications_start_date_label": "Уведомлять с",
     "notifications_in_label": "В ",
     "notifications_delete_button": "Удалить уведомления",
     "notifications_message": "Вы просили напомнить о приеме лекарства: {}",

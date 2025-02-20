@@ -82,7 +82,7 @@ async def notifications_delete(callback: CallbackQuery):
                                       reply_markup=inline_keyboard)
         return
     for i, notification in enumerate(notifications):
-        button = [InlineKeyboardButton(text=f"№{i + 1} {notification['message'].split(':')[1]}",
+        button = [InlineKeyboardButton(text=f"№{i + 1}",
                                        callback_data=f"notification_id_{notification['id']}")]
         buttons.insert(i, button)
 
