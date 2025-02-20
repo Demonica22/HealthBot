@@ -10,8 +10,14 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.get("/")
-async def get_all_users(session: SessionDep):
+async def get_all_users(session: SessionDep,
+                        with_diseases: bool = None,
+                        free: bool = None):
     query = select(User)
+    if with_diseases:
+        query = query.options(selectinload(User.diseases))
+    if free:
+        query = query.where(User.doctor_id == None)
     result = await session.execute(query)
     users = result.scalars().all()
     return users
@@ -33,18 +39,6 @@ async def add_user(data: UserSchema, session: SessionDep):
     session.add(new_user)
     await session.commit()
     return new_user
-
-
-@router.get("/free")
-async def get_free_users(session: SessionDep,
-                         with_diseases: bool = False):
-    query = select(User).where(User.doctor_id == None)
-    if with_diseases:
-        query = query.options(
-            selectinload(User.diseases))
-    result = await session.execute(query)
-    users = result.scalars().all()
-    return users
 
 
 @router.get("/{user_id}")
@@ -76,7 +70,7 @@ async def update_user(user_id: int,
 @router.get("/by_doctor/{doctor_id}")
 async def get_doctors_users(doctor_id: int,
                             session: SessionDep,
-                         with_diseases: bool = False
+                            with_diseases: bool = False
                             ):
     query = select(User).where(User.doctor_id == doctor_id)
     if with_diseases:

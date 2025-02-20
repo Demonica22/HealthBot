@@ -16,11 +16,6 @@ async def test_create_user(db_session, async_client):
         "weight": 100,
         "height": 120
     }
-    # user = User(**data)
-    # db_session.add(user)
-    #
-    # await db_session.commit()
-
     response = await async_client.post("/users/", json=data)
     assert response.status_code == status.HTTP_201_CREATED
 

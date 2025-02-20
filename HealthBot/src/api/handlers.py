@@ -24,7 +24,6 @@ FINISH_DISEASE_URL = DISEASES_URL + "mark_as_finished/"
 NOTIFICATIONS_URL = API_URL + "/notifications/"
 NOTIFICATIONS_FOR_USER = NOTIFICATIONS_URL + "for_user/"
 
-FREE_USERS_URL = USERS_URL + "free"
 BY_DOCTOR_USERS_URL = USERS_URL + "by_doctor/"
 DOCTORS_URL = API_URL + "/doctor/"
 
@@ -163,7 +162,7 @@ async def get_all_notifications() -> list[dict]:
 
 async def get_free_users() -> list[dict]:
     async with aiohttp.ClientSession() as session:
-        async with session.get(FREE_USERS_URL, params={"with_diseases": 1}) as response:
+        async with session.get(USERS_URL, params={"with_diseases": 1, "free": 1}) as response:
             response.raise_for_status()
             return await response.json()
 
