@@ -49,12 +49,12 @@ localization = {
     "no": "Нет",
 
     # БОЛЕЗНИ
-    "add_disease_message": "Чем вы болеете?",
-    "disease_description_message": "Опишите вашу болезнь (симптомы, осложнения, все что полезно врачу)",
-    "disease_treatment_plan_message": "Если у вас есть план лечения напишите его:",
-    "disease_date_start_message": "Когда заболели? (введите в формате ДД.ММ.ГГГГ)",
-    "disease_date_end_message": "Когда выздоровели? (введите в формате ДД.ММ.ГГГГ)",
-    "disease_still_sick_message": "До сих пор болеете?",
+    "add_disease_message": "Введите название болезни",
+    "disease_description_message": "Опишите симптомы и осложнения",
+    "disease_treatment_plan_message": "Опишите план лечения (если есть)",
+    "disease_date_start_message": "Введите дату начала болезни? (в формате ДД.ММ.ГГГГ)",
+    "disease_date_end_message": "Введите дату окончания болезни? (в формате ДД.ММ.ГГГГ)",
+    "disease_still_sick_message": "Болезнь кончилась?",
     "disease_add_success_message": "Болезнь успешно добавлена!",
     "disease_choose_inline_tip": "Введите свою болезнь или выберите из списка",
     "default_diseases_list": ["ОРВИ", "Грипп", "Аллергия", "Перелом", "Сердечно сосудистые заболевания"],
