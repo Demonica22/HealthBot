@@ -15,6 +15,7 @@ class Notification(Base):
     end_date: Mapped[datetime.datetime]
     start_date: Mapped[datetime.datetime] = mapped_column(nullable=True)
     time_notifications: Mapped[list["NotificationTime"]] = relationship(back_populates="notification", uselist=True)
+    is_patient: Mapped[bool] = mapped_column(server_default='t')
 
 
 class NotificationTime(Base):

@@ -46,13 +46,13 @@ def generate_notifications_message(notifications: list[dict], user_language: str
     if not notifications:
         return get_text("notifications_empty_list", user_language)
     message = "--------------------\n"
-    for disease in notifications:
+    for notification in notifications:
         message += (
-            f"<b>{disease['message']}</b>\n"
-            f"<b>{get_text("notifications_end_date_label", user_language)}:</b>\n{disease['end_date']}\n"
+            f"<b>{notification['message']}</b>\n"
+            f"<b>{get_text("notifications_end_date_label", user_language)}:</b>\n{notification['end_date']}\n"
         )
         message += get_text("notifications_in_label", user_language)
-        for time in disease['time_notifications']:
+        for time in notification['time_notifications']:
             message += f"{time['time']} "
         message += "\n"
         message += f"\n--------------------\n"
@@ -79,4 +79,18 @@ def generate_users_message(users: list[dict], user_language: str, users_type: st
             message += f"<b>{get_text('user_is_healthy', user_language)}</b>"
         message += "\n"
         message += f"\n--------------------\n"
+    return message
+
+
+def generate_schedule_message(appointments: list[dict], user_language: str) -> str:
+    if not appointments:
+        return get_text("doctor_appointments_empty_list_message", user_language)
+
+    message = "--------------------\n"
+    for appointment in appointments:
+        message += (
+            f"<b>{appointment['message']}</b>\n"
+        )
+        message += f"\n--------------------\n"
+
     return message

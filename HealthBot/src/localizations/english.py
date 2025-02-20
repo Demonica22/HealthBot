@@ -126,6 +126,8 @@ localization = {
 
     "notifications_add_error": "Error adding notification: {}",
     "doctor_get_patients_button": "List of your patients",
+    "get_doctor_schedule_button": "Appointment schedule",
+
     "doctor_get_free_patients_button": "List of available patients",
     "doctor_menu_button": "To doctor’s menu",
     "doctor_menu": "Doctor’s menu",
@@ -151,6 +153,8 @@ localization = {
     "appointment_add_success_message": "Appointment notification successfully added!",
     "appointment_notification_for_patient_message": "You have a scheduled appointment with doctor {} {} at {}",
     "appointment_notification_for_doctor_message": "You have a scheduled appointment with patient {} {} at {}",
+    "doctor_appointments_empty_list_message": "You dont have any appointments yet.",
+
     "back_to_patient_menu_button": "Back to patient menu",
 
     "day_word": "days",

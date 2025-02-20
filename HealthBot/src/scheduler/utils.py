@@ -134,7 +134,8 @@ async def schedule_doctor_visit(doctor: dict, patient: dict, notification_data: 
                     notification_data['time']),
             'end_date': end_date,
             'start_date': date,
-            'time_notifications': [{'time': notification_data['time']}]
+            'time_notifications': [{'time': notification_data['time']}],
+            'is_patient': False
         },
     ]
     return notifications

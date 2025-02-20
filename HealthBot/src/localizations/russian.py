@@ -127,6 +127,7 @@ localization = {
 
     # Doctors
     "doctor_get_patients_button": "Список ваших пациентов",
+    "get_doctor_schedule_button": "Расписание приемов",
     "doctor_get_free_patients_button": "Список свободных пациентов",
     "doctor_menu_button": "В меню доктора",
     "doctor_menu": "Меню доктора",
@@ -152,5 +153,6 @@ localization = {
     "appointment_add_success_message": "Уведомление о приеме успешно добавлено!",
     "appointment_notification_for_patient_message": 'У вас запланирован прием у врача {} {} в {}',
     "appointment_notification_for_doctor_message": 'У вас запланирован прием пациента {} {} в {}',
+    "doctor_appointments_empty_list_message": "Список ваших приемов пуст.",
     "back_to_patient_menu_button": "Вернуться в меню пациента"
 }

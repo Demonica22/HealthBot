@@ -19,6 +19,7 @@ class NotificationSchema(BaseModel):
     id : int
     user_id: int
     message: str
+    is_patient: bool
     end_date: datetime
     start_date: datetime | None
     time_notifications: list[dict]
@@ -38,6 +39,7 @@ class NotificationSchema(BaseModel):
 class NotificationPostSchema(BaseModel):
     user_id: int
     message: str
+    is_patient: bool = True
     end_date: str
     start_date: str | None = None
     time_notifications: list[dict]

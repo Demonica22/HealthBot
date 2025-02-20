@@ -1,5 +1,5 @@
-from fastapi import APIRouter, status, Request
-from sqlalchemy import select, update, delete
+from fastapi import APIRouter, status
+from sqlalchemy import select, delete, cast, Date
 from sqlalchemy.orm import selectinload
 
 from src.database.session import SessionDep
@@ -52,8 +52,25 @@ async def delete_notification(notification_id: int, session: SessionDep):
             response_model=list[NotificationSchema],
             status_code=status.HTTP_200_OK)
 async def get_notifications_for_user(user_id: int, session: SessionDep):
-    query = select(Notification).where(Notification.user_id == user_id).options(
-        selectinload(Notification.time_notifications))
+    query = (select(Notification)
+             .where(Notification.user_id == user_id)
+             .options(selectinload(Notification.time_notifications)))
+    result = await session.execute(query)
+
+    return result.scalars().all()
+
+
+@router.get("/schedule/{doctor_id}",
+            response_model=list[NotificationSchema],
+            status_code=status.HTTP_200_OK
+            )
+async def get_doctor_schedule(session: SessionDep, doctor_id: int):
+    query = ((select(Notification)
+              .where(Notification.user_id == doctor_id)
+              .where(cast(Notification.end_date, Date) == cast(Notification.start_date, Date))
+              .where(Notification.is_patient == False)
+              .options(selectinload(Notification.time_notifications)))
+             .order_by(Notification.end_date))
     result = await session.execute(query)
 
     return result.scalars().all()

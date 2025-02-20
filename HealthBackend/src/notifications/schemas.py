@@ -15,7 +15,7 @@ class NotificationAddSchema(BaseModel):
     end_date: datetime.datetime
     start_date: datetime.datetime | None = None
     time_notifications: list[NotificationTimeSchema] = None
-
+    is_patient: bool = True
     @field_validator("end_date", "start_date", mode='before')
     def timestamp_to_date(cls, date) -> datetime.datetime | None:
 
@@ -35,3 +35,4 @@ class NotificationSchema(BaseModel):
     end_date: datetime.datetime
     start_date: datetime.datetime | None = None
     time_notifications: list[NotificationTimeSchema] = None
+    is_patient: bool

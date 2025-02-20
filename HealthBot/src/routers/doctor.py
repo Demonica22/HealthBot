@@ -14,14 +14,18 @@ from src.api.handlers import (
     add_notification,
     get_user_active_diseases,
     finish_disease,
-    get_disease
+    get_disease,
+    get_doctor_schedule
 )
 from src.scheduler.utils import schedule_notifications, schedule_doctor_visit
 from src.localizations.main import get_text
 from src.middleware.auth import DoctorAuthMiddleware
-from src.utils.message_formatters import generate_users_message, generate_active_diseases_message
+from src.utils.message_formatters import (
+    generate_users_message,
+    generate_active_diseases_message,
+    generate_schedule_message
+)
 from src.states.doctor_choose_patient import FreePatientChoose, DoctorsPatientChoose
-from src.states.disease_add import DiseaseAdd
 from src.states.doctor_appointment_add import DoctorAddAppointment
 from src.utils.regex import DATE_REGEX, TIME_REGEX
 from src.routers.disease import add_disease_handler
@@ -41,6 +45,9 @@ async def doctor_menu(message: Message, edit: bool = False):
         [InlineKeyboardButton(
             text=get_text("doctor_get_free_patients_button", user_language),
             callback_data="get_free_patients")],
+        [InlineKeyboardButton(
+            text=get_text("get_doctor_schedule_button", user_language),
+            callback_data="get_doctor_schedule")],
     ]
 
     inline_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
@@ -416,4 +423,18 @@ async def appointment_self_notify_handler(callback: CallbackQuery, state: FSMCon
     await schedule_notifications(bot=callback.message.bot,
                                  data=notifications)
     await callback.message.edit_text(get_text("appointment_add_success_message", user_language),
+                                     reply_markup=inline_keyboard)
+
+
+@doctor_router.callback_query(F.data == "get_doctor_schedule")
+async def get_doctor_schedule_handler(callback: CallbackQuery, state: FSMContext):
+    user_language = (await get_user_by_id(callback.message.chat.id))['language']
+
+    appointments = await get_doctor_schedule(callback.message.chat.id)
+    inline_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=get_text("back_button", user_language),
+                              callback_data="doctor_menu")]
+    ]
+    )
+    await callback.message.edit_text(generate_schedule_message(appointments, user_language),
                                      reply_markup=inline_keyboard)
