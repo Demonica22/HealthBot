@@ -43,7 +43,6 @@ async def add_disease_handler(callback: CallbackQuery, state: FSMContext):
         inline_tip=get_text("disease_choose_inline_tip", user_language),
         row_size=DEFAULT_DISEASES_LIST_ROW_SIZE
     )
-
     await callback.message.answer(get_text("add_disease_message", user_language), reply_markup=keyboard)
 
     await state.set_state(DiseaseAdd.title)
@@ -144,11 +143,10 @@ async def disease_add_end(user_language,
                              reply_markup=inline_keyboard)
 
 
-
 @disease_router.callback_query(DiseaseAdd.still_sick)
 async def still_sick_chosen(callback: CallbackQuery, state: FSMContext):
     user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
-    if callback.data.startswith("yes"):
+    if callback.data.startswith("no"):
         await state.update_data(still_sick=True)
         await disease_add_end(user_language, callback.message, state, edit=True)
 

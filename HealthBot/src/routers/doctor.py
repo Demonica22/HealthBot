@@ -24,6 +24,7 @@ from src.states.doctor_choose_patient import FreePatientChoose, DoctorsPatientCh
 from src.states.disease_add import DiseaseAdd
 from src.states.doctor_appointment_add import DoctorAddAppointment
 from src.utils.regex import DATE_REGEX, TIME_REGEX
+from src.routers.disease import add_disease_handler
 
 doctor_router = Router()
 doctor_router.message.middleware(DoctorAuthMiddleware())
@@ -333,13 +334,8 @@ async def get_patient_medical_card(callback: CallbackQuery, state: FSMContext):
 
 @doctor_router.callback_query(DoctorsPatientChoose.action and F.data == "add_disease_for_patient")
 async def doctor_choose_patient_id_handler(callback: CallbackQuery, state: FSMContext):
-    user_language: str = (await get_user_by_id(callback.message.chat.id))['language']
-
-    await callback.message.answer(get_text("add_disease_message", user_language))
+    await add_disease_handler(callback, state)
     patient_id = (await state.get_data())["patient_id"]
-    await state.clear()
-
-    await state.set_state(DiseaseAdd.title)
     await state.update_data(for_patient=patient_id)
 
 
