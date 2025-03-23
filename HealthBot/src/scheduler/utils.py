@@ -125,8 +125,11 @@ async def schedule_doctor_visit(doctor: dict, patient: dict, notification_data: 
             'start_date': date,
             'time_notifications': [{'time': one_hour_before}]
         },
+
+    ]
+    if notification_data['notify_your_self']:
         # Уведомление для доктора, ровно в день приема
-        {
+        notifications.append({
             'user_id': doctor['id'],
             'message': get_text("appointment_notification_for_doctor_message", doctor['language'])
             .format(patient['name'],
@@ -136,6 +139,5 @@ async def schedule_doctor_visit(doctor: dict, patient: dict, notification_data: 
             'start_date': date,
             'time_notifications': [{'time': notification_data['time']}],
             'is_patient': False
-        },
-    ]
+        })
     return notifications
