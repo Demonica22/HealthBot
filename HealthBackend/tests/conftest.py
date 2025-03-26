@@ -95,4 +95,23 @@ async def test_doctor(db_session):
     return doctor
 
 
+@pytest.fixture
+async def notifications_test_user(db_session):
+    from src.users.models import User
+    user_id = 4444
+    result = await db_session.execute(select(User).where(User.id == user_id))
+    user = result.scalars().first()
 
+    if not user:
+        user = User(
+            id=user_id,
+            name="NotificationUser",
+            gender="other",
+            language="en",
+            weight=70,
+            height=170
+        )
+        db_session.add(user)
+        await db_session.commit()
+
+    return user
