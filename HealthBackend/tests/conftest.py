@@ -6,6 +6,10 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy import NullPool
 from src.database.settings import settings
 from src.database.models import Base
+from src.users.models import User  # noqa
+from src.diseases.models import Disease  # noqa
+from src.notifications.models import Notification, NotificationTime  # noqa
+from src.doctors.models import Doctor  # noqa
 
 DATABASE_URL = settings.database_test_url
 
