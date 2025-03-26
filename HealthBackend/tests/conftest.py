@@ -3,6 +3,8 @@ import pytest
 import httpx
 import asyncio
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy import select
+
 from sqlalchemy import NullPool
 from src.database.settings import settings
 from src.database.models import Base
@@ -17,11 +19,6 @@ engine = create_async_engine(DATABASE_URL, echo=True, poolclass=NullPool)
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
-# @pytest_asyncio.fixture(scope="session")
-# def event_loop():
-#     loop = asyncio.get_event_loop_policy().new_event_loop()
-#     yield loop
-#     loop.close()
 @pytest_asyncio.fixture(scope="session", autouse=True)
 async def create_tables() -> None:
     async with engine.begin() as connection:
@@ -60,3 +57,42 @@ async def async_client(test_app):
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=test_app),
                                  base_url="http://127.0.0.1:8000") as test_client:
         yield test_client
+
+
+@pytest.fixture
+async def disease_test_user(db_session):
+    user_id = 999  # фиксированный ID для тестов
+
+    result = await db_session.execute(select(User).where(User.id == user_id))
+    user = result.scalars().first()
+
+    if not user:
+        user = User(
+            id=user_id,
+            name="DiseaseTestUser",
+            gender="other",
+            language="en",
+            weight=70,
+            height=170
+        )
+        db_session.add(user)
+        await db_session.commit()
+
+    return user
+
+
+@pytest.fixture
+async def test_doctor(db_session):
+    doctor_id = 101
+    result = await db_session.execute(select(Doctor).where(Doctor.id == doctor_id))
+    doctor = result.scalars().first()
+
+    if not doctor:
+        doctor = Doctor(id=doctor_id, name="Test Doctor")
+        db_session.add(doctor)
+        await db_session.commit()
+
+    return doctor
+
+
+
