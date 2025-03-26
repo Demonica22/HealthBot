@@ -15,6 +15,8 @@ async def test_add_disease(async_client, disease_test_user):
     assert response.status_code == 201
     result = response.json()
     assert result["title"] == "Flu"
+
+
 @pytest.mark.asyncio
 async def test_get_disease(async_client, disease_test_user):
     create_response = await async_client.post("/diseases/", json={
@@ -32,6 +34,7 @@ async def test_get_disease(async_client, disease_test_user):
     assert response.status_code == 200
     assert response.json()["title"] == "Migraine"
 
+
 @pytest.mark.asyncio
 async def test_mark_disease_as_finished(async_client, disease_test_user):
     create_response = await async_client.post("/diseases/", json={
@@ -48,6 +51,7 @@ async def test_mark_disease_as_finished(async_client, disease_test_user):
     assert response.status_code == 200
     assert response.json()["success"] is True
 
+
 @pytest.mark.asyncio
 async def test_get_all_user_diseases(async_client, disease_test_user):
     await async_client.post("/diseases/", json={
@@ -62,6 +66,7 @@ async def test_get_all_user_diseases(async_client, disease_test_user):
     response = await async_client.get(f"/diseases/for_user/{disease_test_user.id}")
     assert response.status_code == 200
     assert any(d["title"] == "Infection" for d in response.json())
+
 
 @pytest.mark.asyncio
 async def test_get_diseases_with_start_date_excludes_old(async_client, disease_test_user):
